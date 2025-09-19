@@ -31,19 +31,43 @@ Remember, once you code is done:
 
 
 ## Table of Contents
-
 * [Technical Details](#technical-details)
    * [Use `filtered()`](#use-filtered)
+   * [Avoid `mapped()` on relational fields](#avoid-mapped-on-relational-fields)
    * [`api.depends` decorator](#apidepends-decorator)
+      * [No `write()` in computes](#no-write-in-computes)
+      * [Use `write()` correctly](#use-write-correctly)
+   * [Domain manipulation](#domain-manipulation)
    * [Xpath Tricks](#xpath-tricks)
+      * [`$0` magic variable](#0-magic-variable)
+      * [`Move` Xpath](#move-xpath)
+
 * [Style](#style)
+   * [Trailing commas](#trailing-commas)
+   * [Naming and paths](#naming-and-paths)
+   * [Manifest dependencies](#manifest-dependencies)
    * [Alphabetical Ordering](#alphabetical-ordering)
    * [Empty recordset loop](#empty-recordset-loop)
+   * [Favor `Commands`](#favor-commands)
+   * [Comment your patches](#comment-your-patches)
+   * [Useless variables](#useless-variables)
+   * [Modules splitting](#modules-splitting)
+   * [Chars rule](#chars-rule)
+
 * [Linting](#linting)
    * [Python](#python)
    * [Javascript](#javascript)
+   * [Trailing whitespaces](#trailing-whitespaces)
+
 * [Commit Message](#commit-message)
+   * [Task ID Reference](#task-id-reference)
+   * [Commit message matter](#commit-message-matter)
+   * [Never use merge commit](#never-use-merge-commit)
+
 * [Misc](#misc)
+   * [Odoo.sh dev branches](#odoosh-dev-branches)
+
+
 
 
 
@@ -51,8 +75,31 @@ Remember, once you code is done:
 
 ### Use `filtered()`
 
+Don't
+```py
+for line in orders.order_line:
+    if line.display_type
+        continue
+    do_some_code()
+```
+Do
+```py
+for line in orders.order_line.filtered(lambda l: not l.display_type):
+    do_some_code()
+```
 
+### Avoid `mapped()` on relational fields
 
+Don't
+```py
+product = orders.order_line.mapped('product_id')
+product_ids = orders.order_line.product_id.mapped('ids')
+```
+Do
+```py
+product = orders.order_line.product_id
+product_ids = orders.order_line.product_id.ids
+```
 
 ### `api.depends` decorator
 
@@ -83,6 +130,88 @@ The value will be "wrong" until either `color` or `sleeve_type` is changed.
 >
 > Both those cases will create bugs at some point, because code can and will
 > change. So please always list all the fields, explicitly.
+
+#### No `write()` in computes
+
+Never call `write()` inside a field's `compute` method.\
+Use the dot notation (`record.field = 'something'`), or `.update({})` if you
+have multiple values to set.
+
+Calling `write()` is committing the transaction and storing the change in DB,
+while `compute` can also be called by `onchange` RPC calls, supposed to return
+new values that can be discarded by the user.\
+If one of computed field actually called `write()`, the discard won't be able to
+discard that value, leading to inconsistent and unwanted changes in DB, causing
+issues.
+
+#### Use `write()` correctly
+
+When writing on a single field, do
+```py
+# Clear and simple
+partner.name = "Robert"
+```
+Don't
+```py
+# Verbose and complicated for no reason
+partner.write({'name': "Robert"})
+```
+
+When writing on multiple fields, do
+```py
+# Single `write()` call
+partner.write({
+    'name': "Robert",
+    'age': 50,
+    'size': 170,
+})
+```
+Don't
+```py
+# 3 separate `write()` calls instead of 1
+partner.name = "Robert"
+partner.age = 50
+partner.size = 170
+```
+
+### Domain manipulation
+
+Never concat domains yourself with list `append()` or `+`.\
+Use the `expression.OR()/AND()` to avoid bugs.
+
+TODO: Show example
+
+
+### Xpath Tricks
+
+#### `$0` magic variable
+
+When you replace an element, you can actually output that replaced element using
+`$0`, which is generally saving you from a lot of copy paste!
+
+```xml
+<xpath expr="//div[hasclass('card-body')]/span" position="replace">
+    <a t-attf-href="/customers/#{slug(reference)}">$0</a>
+</xpath>
+```
+
+With this, we don't need to copy paste what was inside the `span` in the
+original template.\
+This can of course be used on a whole DOM section, if for instance you want to
+wrap an entire part of a view inside a new node.
+
+#### `Move` Xpath
+
+Xpath `position` attribute comes with a handy `move` value.
+
+
+
+
+
+
+
+## Style
+
 
 ### Trailing commas
 
@@ -127,37 +256,82 @@ This is done for 2 reasons:
    ]
    ```
 
-### Xpath Tricks
+### Naming and paths
 
-#### `$0` magic variable
+It's critical to follow exactly what's inside the official [Coding Guidelines].
+It just helps saving time and avoid overlooking stuff when searching for
+something.
+Here is a quick summary of what to always keep in mind to avoid the most
+recurring mistakes:
+- File path:
+  - Put your wizard/transient models' files into a `wizard` folder
+  - Put your report files in a `report` folder
+- View file names:
+  - Backend views (form, list, kanban, ..) files should be suffixed with
+    `_views`
+  - Template views (QWeb) files should be suffixed with `_templates`
+- Inheriting view ID:
+  If your view inherit from `base.view_company_form`, its ID should be exactly
+  `view_company_form` too.
+- Field and variable naming:
+  - If your field is a m2o, it should **always** be suffixed with `_id`
+  - If your field is a x2m, it should **always** be suffixed with `_ids`
+  - The `_id`/`_ids` rule is ONLY for fields, not for variables.
+  - A variable suffixed with `_id` is supposed to hold **an** ID.
+  - A variable suffixed with `_ids` it's expected to hold **a list** of IDs.
+  Reading code, one should immediately know what is the variable holding:
+  - `some_model.order_id` -> A field related to single `sale.order` record
+  - `some_model.order_ids` -> A field related to a `sale.order` recordset
+  - `order_id` -> A variable holding an integer
+  - `order_ids` -> A variable holding list (or tuple or set or whatever) of
+    integer
+  - `orders` -> A variable ideally holding a `sale.order` recordset
+  Bad naming examples from one PR:
+  `contract_discount`: this was the name of a `Monetary` field containing the
+  actual discount amount. It should have been `contract_discount_amount`.\
+  `total_ppd_adc_line`: this was the name of a boolean field to check if a line
+  was the total line or not. It should have been `is_total_ppd_adc_line`.
+- Method naming:
+  - Field's `compute` method should always be named `_compute_field_name`:
+    - `_compute_orders` is expected to be the computed method of the `orders`
+      field, not the `order_ids` field, or it should be named
+      `_compute_order_ids`.
+    - A method should **never** be prefixed by `_compute` if it is not a field's
+      computed method. It should instead be named something like
+      `_generate_something()`, `_get_something()`, ..
+  - Field's `inverse` method should always be named `_inverse_field_name`, not
+    `_get_field_name` or `_update_field_name`
+  - The same rule applies to `search` methods
+  - Try to follow the same rule for `api.onchange` methods. It should at least
+    be prefixed by `_onchange`.\
+    **DO NOT** name it `_compute_xx`, that's maximum confusion and we will have
+    to find a specific punishment for you if you ever do that.
 
-When you replace an element, you can actually output that replaced element using
-`$0`, which is generally saving you from a lot of copy paste!
+### Manifest dependencies
 
-```xml
-<xpath expr="//div[hasclass('card-body')]/span" position="replace">
-    <a t-attf-href="/customers/#{slug(reference)}">$0</a>
-</xpath>
+In module manifests, don't list every modules you indirectly depend from.\
+If those are already an obvious dependency of another one, don't mention it.\
+While it might looks helpful to list everything when the list is short, it
+quickly gets out of control.
+
+Don't
+```py
+'depends': [
+    'website_sale',
+    'sale_renting',
+    'website_sale_renting',
+    'payment',
+    'rating',
+],
 ```
-
-With this, we don't need to copy paste what was inside the `span` in the
-original template.\
-This can of course be used on a whole DOM section, if for instance you want to
-wrap an entire part of a view inside a new node.
-
-#### `Move` Xpath
-
-Xpath `position` attribute comes with a handy `move` value.
-
-
-
-
-
-
-
-
-
-## Style
+Do
+```py
+'depends': [
+    'website_sale_renting',
+],
+```
+For instance, `rating` is already part of `portal_rating` which is part of
+`website_sale`, which is part of `website_sale_renting`.
 
 ### Alphabetical Ordering
 
@@ -357,6 +531,129 @@ async updatePrograms() {
 Otherwise, we have to copy paste your method and the standard method in text
 comparison tools to figure what you changed.
 
+### Useless variables
+
+Variables inevitably adds complexity and ambiguity by simply existing.\
+This is because you have to come up with a name for your variable and more often
+than not, this name won't makes as much sense to other as it did to you and
+won't be as self-explanatory as you thought it would be.
+
+> Tip: Note that the ambiguity caused by just existing (meaning having a `name`
+> decided by the developer) also exists for methods, which is one of the reason
+> to not blindly follow the "*Single-responsibility principle*" which is not as
+> true as most people think.
+> 👉 See TODO my link to not encapsulate code "a outrance"
+
+Don't:
+```py
+headers = {"Abc": self.abc, "Def": self.def}
+kwargs = {"headers": headers}
+
+```
+Do:
+```py
+kwargs = {"headers": {"Abc": self.abc, "Def": self.def}}
+```
+
+Don't:
+```py
+some_key = self.record_id.project_some_key
+endpoint = self.record_id.project_endpoint
+project_request = ProjectRequest(some_key, endpoint)
+```
+Do:
+```py
+project_request = ProjectRequest(
+    self.record_id.project_some_key,
+    self.record_id.project_endpoint
+)
+# The fields name are already self explanatory, storing it in a variable if only
+# used once just adds complexity when reviewing / debugging code. People will
+# have to keep scrolling back & forth to see what's inside the variable.
+```
+
+### Modules splitting
+
+**Correct dependencies**:
+When working with multiple modules in a project, pay attention when using
+something from `module_A` (fields, methods, js..) if you are in `module_B`.\
+Be sure the dependencies are correctly set between modules, else your `module_B`
+will crash at install. It's often not noticed because when working on SH dumps
+both modules are already installed.
+
+**Define where it's used**:
+If `module_A` defines a field, but only `module_B` uses it, the field should
+be defined in `module_B`, not in a "base" / "common" `module_A`.\
+Never encapsulate stuff because you think you might need to reuse it later. You
+can always change it later if you really need it.
+
+In the same way, if `module_A` defines a field, `module_B` shouldn't be the one
+adding the field inside a standard inherited view, ít should be part of
+`module_A`.
+
+**Don't over-split**:
+Don't create a module for every single small improvement. That's not the purpose
+of a module.\
+Regroup all the flows/logic related to an Odoo feature inside the same module
+instead.\
+Creating too many modules to encapsulate every small feature is generally what's
+creating mistakes later where some features will need to coexists / interfere
+with another.
+
+Odoo's `website_sale` is a good example. There is not:
+- a `website_sale_product` to generate product website pages (/shop/product) and
+  add eCommerce fields to products
+- a `website_sale_grid` to generate the /shop page and give possibility to
+  browse the ecommerce
+- a `website_sale_list` to add an option to turn the /shop page into a list
+- a `website_sale_checkout` to add the code related to the cart
+- a `website_sale_checkout_extra_steps` to add the code for the optional extra
+  step during checkout
+While that could conceptually make sense, all those modules would serve the same
+purpose to have the core features of an eCommerce.\
+Should it have been built like that, that would be a nightmare to read and
+debug code. At some point, we might want a bridge between multiple modules to
+add a feature relying on two other modules.
+
+Instead, we have:
+- a `website_sale` to add all the ecommerce core features and regroup all of the
+  above examples
+- a `website_sale_delivery` to add the delivery feature to the ecommerce
+- a `website_sale_wishlist` to add the wishlist feature to the ecommerce
+
+> [!WARNING]
+> Remember that all modules need to be installable **alone** (`-i module_name`)
+> on a new DB. Unless they exists to be used by multiple unrelated modules, they
+> should also have an utility / make sense when installed alone.
+
+### Chars rule
+
+**For comments and docstring**: never go over 80 chars (but use all the available
+space up to that).
+
+**For commit message**: it should actually be 72: `git log` (or `tig` etc) are
+inserting 4 spaces after and before your message, so 72 actually makes it go to
+80.
+Also note that your commit title on Github will glitched when exceeding 72
+chars. The title will be cut with ellipsis.
+Code blocks and links will obviously go over the 72 chars limit.
+
+> [!TIP]
+> Use markdown for you links, see TODO add links to markdown
+
+**For code**: no strict rule but try to have it fit under 100 chars as a rule of
+thumbs.
+
+This guideline is really useful. If you write very long lines, it will be a
+nightmare to read in terminal when blaming with `git log`, `tig` etc.\
+One will have to endlessly *scroll right, scroll down, scroll left*, repeating
+this until reaching the end of your commit message.
+
+
+> [!TIP]
+> You can add **rulers** in your IDE, but also in your terminal when inside a
+> `git commit` prompt.
+> 👉 See how to in my config TODO add link to my config
 
 
 ## Linting
@@ -398,10 +695,13 @@ See [How to install eslint linter](TODO)
 > has been fully changed.
 
 
+### Trailing whitespaces
 
+Your linters should catch it in PY/JS. The [Trailing spaces extension] extension
+is very convenient to catch it in all languages.
 
-
-
+Trailing whitespaces are bad and how it looks in most people IDE:
+![Trailing Whitespaces](img/trailing-whitespaces.png)
 
 
 
@@ -473,26 +773,86 @@ There are a few reasons not to use it:
 There are some more reasons, but those ones are related to the wrong usage
 people make of merge commit, not merge commit iself:
 - People ship temporary/wip commit in the merge commits
-  !(Merge Commit Wip Commits)[img/merge-commit-wip-commit.png]
+  ![Merge Commit Wip Commits](img/merge-commit-wip-commit.png)
+  ![Merge Commit Wip Commits (2)](img/merge-commit-wip-commit-2.png)
+  ![Merge Commit Wip Commits (3)](img/merge-commit-wip-commit-3.png)
 - People don't bother having a clean commit history (even if no wip commit)
   inside the merge commit (so, basically, inside the PR) with clear commit
   message and clear code division
 - Doing the merge commit through the GIT UI creates commit with a weird and
   incorrect author email (autogenerated noreply)
-  !(Wrong Author Merge Commit)[img/wrong-author-merge-commit.png]
+  ![Wrong Author Merge Commit](img/wrong-author-merge-commit.png)
   > [!TIP]
   > You can fully disable merge commit button from PR on the repository settings.
 
 In practice, it is always wrongly used and systematically lead to awful and
 impossible to use/understand spaghetti commits history:
 
-!(Spaghetti History Merge Commit)[img/spaghetti-history-merge-commit.png]
+![Spaghetti History Merge Commit](img/spaghetti-history-merge-commit.png)
 
+### Links (markdown)
 
+- Use full URLs, don't just link commit hashes or PR #number.
+  Don't:
+  ```
+  Commit 1630663b8d and commit 7f49b3b3039 actually conflict with PR #12..
+  ```
+  This won't be clickable when debugging code locally, adding complexity for no
+  reason.\
+  Those "links" will only be turned into clickable links on Github.\
+  Use full path instead, with markdown, see below.
+- Use `markdown`, it makes your commit message easier to read, remove "noise"
+  from it and allow you to easily follow the "72 max chars" rule for commit
+  messages.
+  ```
+  Commit [1] and commit [2] actually conflict with PR [3]..
 
+  [1]: https://github.com/org/repo/commit/0eaa4c0ece9927c80c5e2e1991d49093a8f774cc
+  [1]: https://github.com/org/repo/commit/1630663b8dec6463ab0118171688f7f49b3b3039
+  [1]: https://github.com/org/repo/pull/12
+  ```
 
 
 ## Misc
+
+
+### Quick technical wins
+
+#### Call `ids` on single record
+
+`ids` exists even on single recordset, it's a convenient way to get the `id`
+inside an array directly.
+Don't
+```py
+company_ids = [order.company_id.id]
+```
+Do
+```py
+company_ids = order.company_id.ids
+```
+
+#### Hint when you ignore `super()`
+
+If you are replacing a whole method and purposely don't call `super()`, add a
+comment.
+Ideally, also explain why.
+
+```py
+@api.model
+def _some_method(self, vals):
+    # Override, ignoring `super()` because we want to <insert reason>.
+    some_code()
+```
+
+#### Overuse comments
+
+One should never spend time trying to understand what you did. Try to figure
+which lines might not be clear without explanation and add a comment.
+
+Here, no one would ever understand what is the reason of `startswith('S')`.
+```xml
+<t t-set="is_so_report" t-value="doc and doc.name and doc.name.startswith('S')"/>
+```
 
 ### Odoo.sh dev branches
 
@@ -507,12 +867,30 @@ really is, and brings confusion when someone opens the project.
 
 | Before Cleaning | After Cleaning |
 | - | - |
-| !(SH Before Cleaning)[img/sh-before-cleaning.png] | !(SH After Cleaning)[img/sh-after-cleaning.png] |
+| ![SH Before Cleaning](img/sh-before-cleaning.png) | ![SH After Cleaning](img/sh-after-cleaning.png) |
 
 > [!TIP]
 > When opening an SH project, if it looks messy with old dev branches, ideally
   ping the devs and ask them to clean it up. Takes 2 min, keeps things clear.
 
+### Method splitting (personal opinion)
+
+TODO
+Write this in a separate wiki, and add a link here
+Show jden method for example (a lot of bugs bcomes clear)
++ illustrate https://github.com/odoo/odoo/pull/133905#discussion_r1340267589
++ explain that it causes bug, show many example from my review
+  find those, but one is https://github.com/odoo-ps/psus-whole-latte-love/pull/3#discussion_r2283358077
+  https://github.com/odoo-ps/psus-whole-latte-love/pull/3#discussion_r2283354649
+Also explain that names add noise
+It also hides bug https://github.com/odoo-ps/psus-whole-latte-love/pull/3#discussion_r2283151502
+To mention:
+- https://en.wikipedia.org/wiki/Single-responsibility_principle
+- https://en.wikipedia.org/wiki/Cyclomatic_complexity
+
+Explain that in ps tech, we really don't care as much as in RD to be inheritable,
+no one is going to inherit our domain in the middle of a method. And if we ever
+need to do it in another module later, we can simply create the hook at that time.
 
 
 
@@ -520,3 +898,4 @@ really is, and brings confusion when someone opens the project.
 [official]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#pep8-options
 [autolink]: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/configuring-autolinks-to-reference-external-resources
 [Git Trailers]: https://git-scm.com/docs/git-interpret-trailers
+[Trailing spaces extension]: https://marketplace.visualstudio.com/items?itemName=shardulm94.trailing-spaces
