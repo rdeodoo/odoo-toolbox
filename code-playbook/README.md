@@ -5,29 +5,35 @@
 _This document is following the official [Coding Guidelines] which you
 should read first._
 
-It contains a list of the most **common mistakes**, implicit **conventions** and
-non-written **best practices** related to Odoo coding.\
+It contains a list of the most **recurring mistakes**, implicit **conventions**
+and non-written **best practices** related to Odoo coding.\
+It also repeat some points mentioned in the official [Coding Guidelines] to add
+some explanation, example or emphasis on the importance to follow it.
+
 Those are important, because they make the code easier to read, easier to debug,
 faster to review, reduce the risk of bugs and just help ensuring consistency
 between Odoo repositories.
 
 **Basic example:**
-If you want to know where is the "Cup" record field of the "Kitchen" model, you
-should **always** find it without having to search:
+If you want to know where is declared the "Cup" relational field of the
+"Kitchen" model, you should **always** find it in a blink, without even having
+to search for it:
 - Exactly in the `/models/kitchen.py` file
 - Named exactly `cup_id`
 
-The views (form, list, ..) should be defined exactly in
-`/views/kitchen_views.xml`. Not in `/views/kitchen_templates.xml`, this is for
-portal/website QWeb views.
+The "Kitchen" views (form, list, ..) should be defined exactly in
+`/views/kitchen_views.xml` (not in `/views/kitchen_templates.xml`, this is for
+portal/website QWeb views).
 
-👉 **Strict code convention is not a way to be annoying, it's a way to make
-everyone life easier and save time to everyone.**
+> [!IMPORTANT]
+> 👉 **Strict code convention is not a way to be annoying, it's a way to make
+> everyone life easier and save time to everyone.**
 
-Remember, once you code is done:
-- Someone will have to read and review it
-- Someone will (most likely) have to debug and fix it later, multiple times
-- Someone will have to read and upgrade it, multiple times
+Remember, once your code is done, it will:
+- **always** be read and reviewed, possibly multiple times, possibly by
+  multiple people
+- **likely** have to be debug and fixed, possibly multiple times
+- **always** be read and upgraded, multiple times, by multiple people
 
 
 ## Table of Contents
@@ -103,8 +109,8 @@ product_ids = orders.order_line.product_id.ids
 
 ### `api.depends` decorator
 
-A method decorated with `api.depends` won't be executed anymore if the values of
-the fields listed in `api.depend()` didn't change.
+A method decorated with `api.depends` won't be executed anymore unless at least
+one of the values of the fields listed in `api.depend()` change.\
 It means that if your decorator is missing one field, your method won't properly
 by invalidated and will keep using a "wrong" value.
 
@@ -116,35 +122,36 @@ def _compute_name(self):
     for rec in self:
         rec.name = f"[{rec.size}] {rec.color} with {rec.sleeve_type} sleeves shirt"
 ```
-In this case, `name` should be changed whenever `size` is changed, but `size`
-has been forgotten in the decorator. It means that even if `size` is changed,
-the `name` will still display the previous `size` used the last time this method
-was called.\
+In this case, `name` should be updated if `size` is changed, as the size is part
+of the name.\
+But `size` has been forgotten in the decorator. It means that even if `size` is
+changed, the `name` will still display the previous `size` value used the last
+time this method was called.\
 The value will be "wrong" until either `color` or `sleeve_type` is changed.
 
 > [!WARNING]
-> Please don't take shortcut like not listing `field_A` because `field_B` is
-> already listed and `field_B` should already trigger a change of value in
+> Please never take shortcut like not listing `field_A` because `field_B` is
+> already listed and `field_B` is supposed to trigger a change of value in
 > `field_A` according to the business code.\
 > Also don't omit a field because you think its value should never change.
 >
-> Both those cases will create bugs at some point, because code can and will
-> change. So please always list all the fields, explicitly.
+> Both those cases will create bugs at some point, because business code can and
+> will change. So please always list all the fields, explicitly.
 
-#### No `write()` in computes
+### No `write()` in computes
 
 Never call `write()` inside a field's `compute` method.\
 Use the dot notation (`record.field = 'something'`), or `.update({})` if you
 have multiple values to set.
 
 Calling `write()` is committing the transaction and storing the change in DB,
-while `compute` can also be called by `onchange` RPC calls, supposed to return
-new values that can be discarded by the user.\
+while `compute` can be called by `onchange` RPC calls, supposed to return new
+values that can later be discarded by the user.\
 If one of computed field actually called `write()`, the discard won't be able to
 discard that value, leading to inconsistent and unwanted changes in DB, causing
 issues.
 
-#### Use `write()` correctly
+### Use `write()` correctly
 
 When writing on a single field, do
 ```py
@@ -176,34 +183,87 @@ partner.size = 170
 
 ### Domain manipulation
 
-Never concat domains yourself with list `append()` or `+`.\
+Never concat domains yourself with list's `append()` or `+`.\
 Use the `expression.OR()/AND()` to avoid bugs.
 
-TODO: Show example
+TODO: Show example because along those line (this was produce the same sql)
+```py
+from odoo.osv.expression import AND, TRUE_DOMAIN, normalize_domain
+
+a = ['|', ('name', '=', 'RDE'), ('name', '=', 'QSM')]
+b = ['|', ('website', '=', 'RDE'), ('website', '=', 'QSM')]
+
+c =  AND([a, b])
+d = a + b
+
+self.env['res.partner'].with_context(active_test=False).search(c)
+self.env['res.partner'].with_context(active_test=False).search(d)
+```
+
+### `logger()` and `_()` params
+
+Never use fstring or string interpolation directly.\
+This one is detailed in the Coding Guidelines [Use Translation method Correctly]
+section.
+Don't:
+```py
+_('Record %s cannot be modified!' % record)  # Mind the `%`
+```
+Do:
+```py
+_('Record %s cannot be modified!', record)  # Mind the `,`
+```
+
+### Access Rights
+
+Don't blindly copy paste the ACL from the Odoo warning log. It will add basic
+`1,1,1,1` (granting all rights) accesses to any user.\
+Most of the time, you only want `1,0,0,0` for regular users. Only admins or
+manager groups should receive `1,1,1,1`.
+
+Generally don't:
+```
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_model_example_1,model_example_1_user,model_example_1,base.group_user,1,1,1,1
+access_model_example_2,model_example_2_user,model_example_2,base.group_user,1,1,1,1
+```
+Do:
+```
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_model_example_1,model_example_1_user,model_example_1,account.group_account_manager,1,1,1,1
+access_model_example_1,model_example_1_user,model_example_1,base.group_user,1,0,0,0
+access_model_example_2,model_example_2_user,model_example_2,account.group_account_manager,1,1,1,1
+access_model_example_2,model_example_2_user,model_example_2,base.group_user,1,0,0,0
+```
 
 
 ### Xpath Tricks
 
 #### `$0` magic variable
 
-When you replace an element, you can actually output that replaced element using
-`$0`, which is generally saving you from a lot of copy paste!
+When you replace an element, you can actually output the element you just
+replaced by using `$0`. This is generally saving you from a lot of copy paste!
 
 ```xml
 <xpath expr="//div[hasclass('card-body')]/span" position="replace">
     <a t-attf-href="/customers/#{slug(reference)}">$0</a>
 </xpath>
 ```
+This example is wrapping a `<span/>` inside a `<a/>`, making it clickable.\
+If the original `<span/>` ever receive a fix or an update (could be some class,
+attribute, text..), you will benefit from it directly since you didn't copy
+pasted the node (which would be sort of "frozen" at the time you copied it).
 
-With this, we don't need to copy paste what was inside the `span` in the
-original template.\
 This can of course be used on a whole DOM section, if for instance you want to
 wrap an entire part of a view inside a new node.
+
+TODO: example in `<details/>`
 
 #### `Move` Xpath
 
 Xpath `position` attribute comes with a handy `move` value.
 
+TODO example
 
 
 
@@ -226,10 +286,11 @@ Always add trailing commas on multiline elements:
 This is done for 2 reasons:
 1. It will avoid useless diff "noise" when someone will add something to those
    elements after you, as it would require to add the trailing comma on your
-   line, including it in the diff.
-2. It often causes frustrating issues that will make you lose time debugging
-   when you will add a new element but forget to add the missing trailing comma.
-   In Python, it won't crash in some cases and will turn the two lines into a
+   line, including it in the new diff.
+2. It often causes frustrating issues that will make you lose time debugging,
+   when you will add a new element but forget to add the missing trailing comma
+   on the line before.
+   In Python, in some cases it won't crash and will turn the two lines into a
    tuple:
    ```py
    'web.assets_backend': [
@@ -258,9 +319,10 @@ This is done for 2 reasons:
 
 ### Naming and paths
 
-It's critical to follow exactly what's inside the official [Coding Guidelines].
+It's critical to follow exactly what's inside the official [Coding Guidelines].\
 It just helps saving time and avoid overlooking stuff when searching for
 something.
+
 Here is a quick summary of what to always keep in mind to avoid the most
 recurring mistakes:
 - File path:
@@ -279,6 +341,7 @@ recurring mistakes:
   - The `_id`/`_ids` rule is ONLY for fields, not for variables.
   - A variable suffixed with `_id` is supposed to hold **an** ID.
   - A variable suffixed with `_ids` it's expected to hold **a list** of IDs.
+
   Reading code, one should immediately know what is the variable holding:
   - `some_model.order_id` -> A field related to single `sale.order` record
   - `some_model.order_ids` -> A field related to a `sale.order` recordset
@@ -286,11 +349,12 @@ recurring mistakes:
   - `order_ids` -> A variable holding list (or tuple or set or whatever) of
     integer
   - `orders` -> A variable ideally holding a `sale.order` recordset
+
   Bad naming examples from one PR:
-  `contract_discount`: this was the name of a `Monetary` field containing the
+  - `contract_discount`: this was the name of a `Monetary` field containing the
   actual discount amount. It should have been `contract_discount_amount`.\
-  `total_ppd_adc_line`: this was the name of a boolean field to check if a line
-  was the total line or not. It should have been `is_total_ppd_adc_line`.
+  - `total_abc_line`: this was the name of a boolean field to check if a line
+  was the total line or not. It should have been `is_total_abc_line`.
 - Method naming:
   - Field's `compute` method should always be named `_compute_field_name`:
     - `_compute_orders` is expected to be the computed method of the `orders`
@@ -306,6 +370,78 @@ recurring mistakes:
     be prefixed by `_onchange`.\
     **DO NOT** name it `_compute_xx`, that's maximum confusion and we will have
     to find a specific punishment for you if you ever do that.
+
+
+### Default values
+
+Don't set or pass things when you don't have to. It adds code, "noise", making
+it harder to read. The less, the better.
+
+#### Fields declaration properties
+Don't set field properties if you are setting the default value:
+```py
+is_admin = fields.Boolean(default=False)  # Bad
+is_admin = fields.Boolean()  # Good
+
+invoice_total = fields.Float(default=0.0)  # Bad
+invoice_total = fields.Float()  # Good
+
+# `currency_id` is already the default `currency_field` used OOTB
+fee_amount = fields.Monetary(currency_field='currency_id')  # Bad
+fee_amount = fields.Monetary()  # Good
+
+name = fields.Char(store=True)  # Bad
+name = fields.Char()  # Good
+
+currency_id = fields.Many2one('res.currency', related='some.thing', readonly=True)  #Bad
+currency_id = fields.Many2one('res.currency', related='some.thing')  # Good
+```
+
+#### Fields declaration magic `string`
+
+The ORM is already generating human readable field names (`string` property) for
+you. Avoid explicitly adding a `string` parameter that would be the same as the
+one Odoo would generate for you.
+
+Odoo will:
+- Replace underscore (`_`) by spaces (` `)
+- Capitalize every word
+- Remove any `_id` or `_ids` suffix
+
+For instance, the `string` parameter is useless in all those cases, as it's
+exactly what will be generated anyway:
+- `fee_amount = fields.Monetary("Fee Amount")`
+- `sale_order_id = fields.Monetary("Sale Order")`
+- `is_allowed_to_buy = fields.Monetary("Is Allowed To Buy")`
+
+#### Fields default values
+
+Don't:
+```py
+env['website'].create({
+    'name': "My Website",
+    'auto_redirect_lang': True,
+    'default_lang_id': lang.id,
+    'company_id': self.env.company.id,
+})
+```
+Do:
+```py
+env['website'].create({
+    'name': "My Website",
+})
+```
+
+#### Default method params
+
+
+```py
+values.get('order', None)  # Bad
+values.get('order')  # Good
+
+env.ref('my.record', raise_if_not_found=True)  # Bad
+env.ref('my.record')  # Good
+```
 
 ### Manifest dependencies
 
@@ -344,7 +480,16 @@ Respect alphabetical orders wherever it can be applied:
 It just helps saving time and avoid overlooking stuff when searching for
 something.
 
-### Empty recordset loop
+> [!NOTE]
+> While it's a generally agreed rule in Python, some find it useless to follow
+> when there is a limited number of elements to sort. While this is fair to say,
+> in practice we have to follow a "all white or all black" rule, or people will
+> just over-abuse or ignore the rule. At best, it will create useless debates.
+> 👉 See my "all white or all black" opinion article (TODO: write it in a separate article), inspire from https://github.com/odoo/odoo/pull/133905#discussion_r1340349356
+
+### Useless checks and fallbacks
+
+#### Empty recordset loop
 Don't do
 ```py
 if recs:
@@ -357,12 +502,71 @@ for rec in recs:
 It won't loop if there are no records. "Protecting" everything in the code when
 it's not required adds a lot of noise.
 
+#### Field default values
+
+Don't overprotect your code with useless checks, it adds room for bugs and makes
+it harder to read.
+
+Don't:
+```py
+record.write({
+    'record_id': line.record_id.id if line.record_id else False,
+    'notes': line.notes or False,
+})
+```
+Do:
+```py
+record.write({
+    'record_id': line.record_id.id,
+    'notes': line.notes,
+})
+```
+
+The ORM is capable (and designed for) of accessing fields on empty records, it
+will default on falsy values:
+- `order.id` -> `False`
+- `order.ids` -> `[]`
+- `order.invoice_ids` -> `account.move()`
+
+#### Empty relational traversal
+
+In the same way as above, the ORM is capable and designed for it:
+
+Don't
+```py
+if partner and partner.order_id and partner.order_id and partner.order_id.company_id and partner.order_id.company_id.name:
+```
+Do
+```py
+if partner.order_id.company_id.name:
+```
+
 ### Favor `Commands`
 
 Use `Commands` instead of the number notation.\n
 Number notation is deprecated and will be removed at some point. `Commands` is
 straightforward and super explicit. using number notation is like purposely
 trying to obfuscate your code.
+
+Don't
+```py
+record.line_ids = [
+    (0, 0, {'name': 'New line'}),      # create
+    (1, 42, {'name': 'Updated line'}), # update id=42
+    (2, 56, False),                    # delete id=56
+    (6, 0, [1, 2, 3]),                 # replace with ids
+]
+```
+Do
+```py
+record.line_ids = [
+    Command.create({'name': 'New line'}),
+    Command.update(42, {'name': 'Updated line'}),
+    Command.delete(56),
+    Command.set([1, 2, 3]),
+]
+```
+
 
 ### Comment your patches
 
@@ -656,6 +860,84 @@ this until reaching the end of your commit message.
 > 👉 See how to in my config TODO add link to my config
 
 
+### Save indentation level
+
+You can easily save indentation with a few tricks / good habits:
+Don't:
+```py
+new_params = self.env["sample.parameter"].search(
+    [
+        ('1', '=', '1'),
+    ]
+)
+```
+Do:
+```py
+new_params = self.env["sample.parameter"].search([
+    ('1', '=', '1'),
+])
+```
+
+Don't:
+```js
+steps = [
+    {
+        content: "Click here",
+        trigger: 'a.here',
+    },
+    {
+        content: "Then here",
+        trigger: 'a.there',
+    },
+];
+```
+Do:
+```js
+steps = [{
+    content: "Click here",
+    trigger: 'a.here',
+}, {
+    content: "Then here",
+    trigger: 'a.there',
+}];
+```
+Indent level is often a challenge when coding. We often lack horizontal space.\
+You want to keep the line at a reasonable maximum length, wasting spaces is
+shooting yourself in the feet.
+
+On top of saving indentation, it's also less LOC, less "noise", code is thus
+easier to read.
+
+### passing args vs kwargs
+
+
+### Be consistent
+
+Consistency helps reading code.
+Don't:
+```py
+field_1_id = fields.Many2one(comodel_name="module.field_1")
+field_2_id = fields.Many2one('module.field_2')
+order.my_method("something", 'no', "discounted")
+```
+Do:
+```py
+field_1_id = fields.Many2one('module.field_1')  # See the quotes and attribute
+field_2_id = fields.Many2one('module.field_2')
+order.my_method('something', 'no', 'discounted')  # See the quotes
+```
+
+1. Be consistent with single/double quotes
+2. Be consistent with using explicit property naming
+
+> [TIP]
+> See TODO my article about single/double quote
+> TODO: point about single/double quotes? mention that it's ok to not respect it, but don't mix it!!
+
+
+
+
+
 ## Linting
 
 You should have both a JS and PY linter.\
@@ -700,7 +982,7 @@ See [How to install eslint linter](TODO)
 Your linters should catch it in PY/JS. The [Trailing spaces extension] extension
 is very convenient to catch it in all languages.
 
-Trailing whitespaces are bad and how it looks in most people IDE:
+Trailing whitespaces are bad and this is how it looks in most people IDE:
 ![Trailing Whitespaces](img/trailing-whitespaces.png)
 
 
@@ -822,6 +1104,7 @@ impossible to use/understand spaghetti commits history:
 
 `ids` exists even on single recordset, it's a convenient way to get the `id`
 inside an array directly.
+
 Don't
 ```py
 company_ids = [order.company_id.id]
@@ -834,7 +1117,7 @@ company_ids = order.company_id.ids
 #### Hint when you ignore `super()`
 
 If you are replacing a whole method and purposely don't call `super()`, add a
-comment.
+comment.\
 Ideally, also explain why.
 
 ```py
@@ -899,3 +1182,7 @@ need to do it in another module later, we can simply create the hook at that tim
 [autolink]: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/configuring-autolinks-to-reference-external-resources
 [Git Trailers]: https://git-scm.com/docs/git-interpret-trailers
 [Trailing spaces extension]: https://marketplace.visualstudio.com/items?itemName=shardulm94.trailing-spaces
+[Use Translation method Correctly]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#use-translation-method-correctly
+
+
+TODO: Write one article about what is a TL for me, see my desc I sent to EMI
