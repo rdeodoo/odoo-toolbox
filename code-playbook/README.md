@@ -94,6 +94,29 @@ for line in orders.order_line.filtered(lambda l: not l.display_type):
     do_some_code()
 ```
 
+### No `filtered()` in `any()`
+
+It fully nullifies the short-circuit optimization of `any()` as you will first
+go through a full loop in `filtered()` before going into a second loop in `any`
+that will be ably to short-circuit.
+
+With big recordset and depending of how early or not the short-circuit would
+happen, this could be hundreds of time slower.
+
+See benchmark
+
+```py
+import timeit
+
+a = self.env['mail.mail'].search([])
+a = a.browse(a.ids * 20)
+
+timeit.timeit('any(a.mapped("references"))', globals=globals(), number=1000)
+# Takes 1.1654435170057695 second
+timeit.timeit('any(m.references for m in a)', globals=globals(), number=1000)
+# Takes 0.02652950100309681 second
+```
+
 ### Avoid `mapped()` on relational fields
 
 Don't
@@ -236,6 +259,29 @@ access_model_example_2,model_example_2_user,model_example_2,account.group_accoun
 access_model_example_2,model_example_2_user,model_example_2,base.group_user,1,0,0,0
 ```
 
+### Limit your search
+
+If you only care about knowing if there is at least one record, or want to only
+get the first one, don't forget `limit=1` on your search.
+
+Don't:
+```py
+existing_record = self.env["my.record"].search([
+    ('field_1', '=', record.some.thing.id),
+    ('field_2', '=', 'no'),
+])
+if existing_record:
+    raise UserError()
+```
+Do:
+```py
+existing_record = self.env["my.record"].search([
+    ('field_1', '=', record.some.thing.id),
+    ('field_2', '=', 'no'),
+], limit=1)  # /!\ See the `limit=1` here
+if existing_record:
+    raise UserError()
+```
 
 ### Xpath Tricks
 
@@ -541,6 +587,28 @@ Do
 if partner.order_id.company_id.name:
 ```
 
+#### Intermediate `depends()` fields
+
+Having `field_id.rec_ids.record_id`, if your compute method only care about /
+use `field_id.rec_ids.record_id` and not directly `field_id` or
+`field_id.rec_ids`, you should list only `field_id.rec_ids.record_id`.
+
+You want the ORM to invalidate the cache and recompute your method **only** if
+`record_id` change.\
+If `field_id` record is changed, but `field_id.rec_ids.record_id` still is the
+same record, there is no need to recompute the method.
+
+Don't
+```py
+@api.depends("field_id", "field_id.rec_ids", "field_id.rec_ids.record_id")
+```
+Do
+```py
+@api.depends("field_id.rec_ids.record_id")
+```
+
+
+
 ### Favor `Commands`
 
 Use `Commands` instead of the number notation.\n
@@ -776,6 +844,26 @@ project_request = ProjectRequest(
 # have to keep scrolling back & forth to see what's inside the variable.
 ```
 
+Don't:
+```js
+const checkoutElement = document.querySelector("div.o_website_sale_checkout");
+if (!this.allCarrierRateShipmentLoaded && checkoutElement) {
+    //
+}
+```
+Do:
+```js
+if (
+    !this.allCarrierRateShipmentLoaded
+    && document.querySelector("div.o_website_sale_checkout")
+) {
+    // ...
+}
+```
+
+Generally speaking, create a variable to just use it once is to avoid, even more
+when it's used the line just below.
+
 ### Modules splitting
 
 **Correct dependencies**:
@@ -911,6 +999,23 @@ easier to read.
 ### passing args vs kwargs
 
 
+There is a single conventional way in python to call a method containing kwargs,
+and it's by naming them.
+
+Given this method:
+```py
+def my_method(self, order, partner, amount, company_id=None, template='c1', name='')
+```
+
+Don't
+```py
+record.my_method(order, partner, 30, 1, 'c2')
+```
+Do
+```py
+record.my_method(order, partner, 30, company_id=1, template='c2')
+```
+
 ### Be consistent
 
 Consistency helps reading code.
@@ -930,7 +1035,7 @@ order.my_method('something', 'no', 'discounted')  # See the quotes
 1. Be consistent with single/double quotes
 2. Be consistent with using explicit property naming
 
-> [TIP]
+> [!TIP]
 > See TODO my article about single/double quote
 > TODO: point about single/double quotes? mention that it's ok to not respect it, but don't mix it!!
 
@@ -1137,6 +1242,112 @@ Here, no one would ever understand what is the reason of `startswith('S')`.
 <t t-set="is_so_report" t-value="doc and doc.name and doc.name.startswith('S')"/>
 ```
 
+#### Construct URLs with `url_join`
+
+Never construct / concat URLs manually. Use the `url_join` method.
+
+#### `t-out` on elements
+
+You should use `t-out` on elements directly. Don't create a `<t/>` just for it,
+it makes code complicated.
+
+Don't
+```xml
+<RecordCode>
+    <t t-out="record_code"/>
+</RecordCode>
+<RecordName>
+    <t t-out="record_name"/>
+</RecordName>
+<SystemTime>
+    <t t-out="system_time"/>
+</SystemTime>
+```
+Do
+```xml
+<RecordCode t-out="record_code"/>
+<RecordName t-out="record_name"/>
+<SystemLeadTime t-out="systeme"/>
+```
+
+> [!WARNING]
+> `<td/>` doesn't support it, but Odoo should let you know if you try to do it.
+
+#### Don't add conditional `s` plural
+
+Don't:
+```xml
+<p>The Primary User<t t-if="len(users) > 1" t-out="'s'"/>:</p>
+```
+
+First, it is a lot of (verbose) code for just a `s`, it could most of the time
+just be:
+```xml
+<p>The Primary User(s):</p>
+```
+
+Second, and most importantly, plural form is depending of the language. Adding
+`s` is not something that can be applied to all languages.
+
+Here, if we ever translate this, people will have to translate
+`The Primary Renter` (exported term).\
+In French, it would be "Le loueur principal". Then when the `s` is added if
+there are multiple users, it would become "Le loueur principals" which is
+totally wrong.\
+It should be "Le**s** loueur**s** princip**aux**". Both words should change, and
+it is not only about adding `s`.
+
+Do:
+```xml
+<p>The Primary User(s):</p>
+```
+So people can translate how they want in their languages, they will know.\
+In French, it would be "Le/les loueur(s) principal(aux)".
+
+Or
+```xml
+<p t-if="len(users) > 1">The Primary Users:</p>
+<p t-else="">The Primary User:</p>
+```
+
+#### Useless `<data>`
+
+This tag should only be used if you add `noupdate="1"` on it. Otherwise, keep
+things simple (as always) and save an indentation level.
+
+Don't:
+```xml
+<odoo>
+    <data>
+        <record ...>
+            ...
+        </record>
+    </data>
+</odoo>
+```
+Do:
+```xml
+<odoo>
+    <record ...>
+        ...
+    </record>
+</odoo>
+```
+
+#### Records concat
+
+Don't
+```py
+website.page_ids = website.additional_page_ids + website.page_id
+# res.partner(1, 1)
+```
+Do
+```py
+website.page_ids = website.additional_page_ids | website.page_id
+# res.partner(1)
+```
+It avoids duplicates.
+
 ### Odoo.sh dev branches
 
 Once your PR is merged, directly **delete your dev branch**.
@@ -1171,9 +1382,14 @@ To mention:
 - https://en.wikipedia.org/wiki/Single-responsibility_principle
 - https://en.wikipedia.org/wiki/Cyclomatic_complexity
 
+- add a quick tips section in my other pages, mentions GH tricks like CTRL + click fold all files, or CTRL+? then Y to canonical url
+  Check if I can have a "See" link from here to this page
+
+
 Explain that in ps tech, we really don't care as much as in RD to be inheritable,
 no one is going to inherit our domain in the middle of a method. And if we ever
 need to do it in another module later, we can simply create the hook at that time.
+TODO: Write one article about what is a TL for me, see my desc I sent to EMI
 
 
 
@@ -1185,4 +1401,3 @@ need to do it in another module later, we can simply create the hook at that tim
 [Use Translation method Correctly]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#use-translation-method-correctly
 
 
-TODO: Write one article about what is a TL for me, see my desc I sent to EMI
