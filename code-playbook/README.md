@@ -94,7 +94,7 @@ for line in orders.order_line.filtered(lambda l: not l.display_type):
     do_some_code()
 ```
 
-### No `filtered()` in `any()`
+### No `filtered()` or `mapped()` in `any()`
 
 It fully nullifies the short-circuit optimization of `any()` as you will first
 go through a full loop in `filtered()` before going into a second loop in `any`
@@ -116,6 +116,16 @@ timeit.timeit('any(a.mapped("references"))', globals=globals(), number=1000)
 timeit.timeit('any(m.references for m in a)', globals=globals(), number=1000)
 # Takes 0.02652950100309681 second
 ```
+
+TODO show example with filtered and conditions
+
+            order.show_din_configuration_warning = order.is_rental_order and any(
+                order_line.filtered(lambda line: line.is_ski_line and not line.din)
+                for order_line in order.order_line
+            )
+            order.show_din_configuration_warning = order.is_rental_order and any(
+                ine.is_ski_line and not line.din for line in order.order_line)
+            )
 
 ### Avoid `mapped()` on relational fields
 
@@ -160,6 +170,10 @@ The value will be "wrong" until either `color` or `sleeve_type` is changed.
 >
 > Both those cases will create bugs at some point, because business code can and
 > will change. So please always list all the fields, explicitly.
+
+> [!WARNING]
+> If you are checking user groups in the method, you also need to add the
+> decorator `@api.depends_context('uid')` so it's user dependent.
 
 ### No `write()` in computes
 
@@ -401,6 +415,9 @@ recurring mistakes:
   actual discount amount. It should have been `contract_discount_amount`.\
   - `total_abc_line`: this was the name of a boolean field to check if a line
   was the total line or not. It should have been `is_total_abc_line`.
+  > [!TIP]
+  > For counter variables, ideally suffix it by `_count`, don't prefix it by
+  > `nb_`, just for consistency across code.
 - Method naming:
   - Field's `compute` method should always be named `_compute_field_name`:
     - `_compute_orders` is expected to be the computed method of the `orders`
@@ -514,6 +531,20 @@ Do
 ```
 For instance, `rating` is already part of `portal_rating` which is part of
 `website_sale`, which is part of `website_sale_renting`.
+
+### Manifest version bump
+
+You need to bump the version whenever one of your PR/commit(s) change is
+modifying the database (structure or values).
+
+This is required for Odoo.sh to automatically update your module and apply your
+changes in DB.\
+If you don't bump it, a manual module update will be required. This is always
+bad because you will need to do that twice: once on the staging when your dev
+branch is merged and once on the production when it is sync'd with the staging.
+
+Here is a non-exhaustive list of changes that require a module update:
+TODO
 
 ### Alphabetical Ordering
 
@@ -1140,6 +1171,15 @@ Your commit message, on the other hand, will be read forever as it is in the
 history of the repository. It is also the only thing people will see when
 blaming the code.
 
+> [!CAUTION]
+> Always write something in the commit message, even a very short one-liner is
+> enough. It's annoying to have to read the code to figure what a commit is
+> about. A very quick explanation doesn't cost much and is always helpful having
+> context before jumping into a commit.\
+> A simple `Client changed his mind, he now wants this column to display "yes" /
+> "no" in the PDF "discount" column, not the amount discounted` is making
+> everything clear upfront.
+
 ### Never use merge commit
 
 There are a few reasons not to use it:
@@ -1230,6 +1270,30 @@ Ideally, also explain why.
 def _some_method(self, vals):
     # Override, ignoring `super()` because we want to <insert reason>.
     some_code()
+```
+
+#### Operator position
+
+For both binary and logical operators, add it at the beginning of the line, it's
+always easier to read and debug.\
+While mentioning only binary operators, this [pep8 section] is explaining it
+very well, have a look.
+
+Don't:
+```py
+if (
+    order.move_ids.filtered(lambda move: move.is_something and not move.amount_field > 0) and
+    self.env.company.setting_name != 'some_value' and
+    self.env.user.has_group('some_module.some_group')
+)
+```
+Do
+```py
+if (
+    order.move_ids.filtered(lambda move: move.is_something and not move.amount_field > 0)
+    and self.env.company.setting_name != 'some_value'
+    and self.env.user.has_group('some_module.some_group')
+)
 ```
 
 #### Overuse comments
@@ -1348,6 +1412,87 @@ website.page_ids = website.additional_page_ids | website.page_id
 ```
 It avoids duplicates.
 
+
+#### `@staticmethod` decorator
+
+Long story short, you probably never need it.
+
+Such decorated method can't be overridden correctly in Odoo "model classes".
+This is generally not what you want, Odoo is supposed to be modular.
+
+They also can't access Odoo ORM environment, or not easily.
+
+#### Watch your loops
+
+##### Move code outside the loop
+
+It's important to move as many LOC as you can outside loops for performance
+reasons.\
+If a LOC is not depending of anything related to the loop, it should never be
+inside it.
+
+Don't:
+```py
+@api.constrains("some_setting")
+def _check_some_setting_required(self):
+    for record in self:
+        # We are fetching the param and assigning it every time we loop.
+        api_key = record.env['ir.config_parameter'].sudo().get_param('app.api_key')
+        setting_xyz = record.env['ir.config_parameter'].sudo().get_param('app.setting_xyz')
+        if api_key and setting_xyz and not record.some_setting:
+            raise ValidationError(_("..."))
+```
+Do:
+```py
+@api.constrains("some_setting")
+def _check_some_setting_required(self):
+    api_key = record.env['ir.config_parameter'].sudo().get_param('app.api_key')
+    setting_xyz = record.env['ir.config_parameter'].sudo().get_param('app.setting_xyz')
+    if api_key and setting_xyz and any(not rec.some_setting for rec in self):
+        raise ValidationError(_("..."))
+```
+
+Don't:
+```py
+for rec in self:
+    message = _("...") if rec.env.context.get("something") else _("...")
+    rec.message_post(body=message)
+    rec.some_field = True
+```
+Do:
+```py
+message = _("...") if rec.env.context.get("something") else _("...")
+for rec in self:
+    rec.message_post(body=message)
+    rec.some_field = True  # Arguably this could be move after the loop so it's a single `write()` call on `self`
+```
+
+##### "Batch" your operations
+
+Sometime, you can simply call the method on the recordset without even needing a
+loop. That's if the method is recordset friendly.\
+It's better for performance, especially if the method is optimized for
+recordset.\
+It's better for readability as it's less LOC, less operation and less variables.
+
+Don't:
+```py
+orders = self.order_ids
+for order in orders.filtered(lambda o: o.state == 'xyz' and o.some_field == 'something'):
+    order.with_context(something=False)._some_method()
+```
+Do:
+```py
+self.order_ids.filtered(
+    lambda o: o.state == 'xyz' and o.some_field == 'something'
+).with_context(something=False)._some_method()
+```
+
+> [!TIP]
+> Have you pay attention? The context was modified once in each loop occurrence.
+> While it's not the most costly operation, avoiding the `for` loop allow for
+> many performance improvements, obvious ones or not.
+
 ### Odoo.sh dev branches
 
 Once your PR is merged, directly **delete your dev branch**.
@@ -1367,9 +1512,9 @@ really is, and brings confusion when someone opens the project.
 > When opening an SH project, if it looks messy with old dev branches, ideally
   ping the devs and ask them to clean it up. Takes 2 min, keeps things clear.
 
-### Method splitting (personal opinion)
+### TODO Method splitting (personal opinion)
 
-TODO
+
 Write this in a separate wiki, and add a link here
 Show jden method for example (a lot of bugs bcomes clear)
 + illustrate https://github.com/odoo/odoo/pull/133905#discussion_r1340267589
@@ -1382,14 +1527,24 @@ To mention:
 - https://en.wikipedia.org/wiki/Single-responsibility_principle
 - https://en.wikipedia.org/wiki/Cyclomatic_complexity
 
-- add a quick tips section in my other pages, mentions GH tricks like CTRL + click fold all files, or CTRL+? then Y to canonical url
-  Check if I can have a "See" link from here to this page
+
+
+
+== TODO LIST ==
+- pages to create (Check if I can have a "See" link from here to this page):
+  - shortcut chrome
+  - shell git visual
+  - keyboard shortcut
+  - git basics - enough for years in Odoo
+  - github tricks:
+    - CTRL + click fold all files
+    - CTRL+? then Y to canonical url
 
 
 Explain that in ps tech, we really don't care as much as in RD to be inheritable,
 no one is going to inherit our domain in the middle of a method. And if we ever
 need to do it in another module later, we can simply create the hook at that time.
-TODO: Write one article about what is a TL for me, see my desc I sent to EMI
+
 
 
 
@@ -1399,5 +1554,5 @@ TODO: Write one article about what is a TL for me, see my desc I sent to EMI
 [Git Trailers]: https://git-scm.com/docs/git-interpret-trailers
 [Trailing spaces extension]: https://marketplace.visualstudio.com/items?itemName=shardulm94.trailing-spaces
 [Use Translation method Correctly]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#use-translation-method-correctly
-
+[pep8 section]: https://peps.python.org/pep-0008/#should-a-line-break-before-or-after-a-binary-operator
 
