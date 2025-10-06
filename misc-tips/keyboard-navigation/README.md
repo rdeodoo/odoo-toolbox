@@ -1,0 +1,55 @@
+# Keyboard Navigation
+
+This is aimed at either newcomers in IT or people with only basics navigation
+knowledge. If you are a `VIM` expert, you probably don't want to read this.
+
+## Generic
+
+Those works in multiple places but not everywhere.
+
+**CTRL+Arrow**: left/right: it allows you to navigate in lines very quickly, the
+same way just pressing left/right arrow would do, but it's "jumping" over
+words.\
+top/bottom doesn't bring much value here.
+
+**Home/End**: Abuse this, it helps you quickly navigating to the very start or
+very end of a line. Combine with `CTRL+Arrow` above, it's allowing you to very
+quickly place your cursor at 70% of a line: press `End`, press `CTRL+Left` a few
+time and voila.
+
+## Text editors / IDE
+
+**SHIFT+Arrow**: Select the next character from your cursor position, left or
+right depending of the arrow you pressed. If you pressed top/bottom arrow, it
+will select what's between your current cursor position up to the same cursor
+position (column) on the next/previous line.
+
+**SHIFT+CTRL+Arrow**: Same as above, but instead of selecting one character at a
+time, it selects one "word" at a time when using right/left arrows. I don't
+recommend using top/bottom arrows here, it behaves differently from one editor
+to another (in a text editor, it will behaves close to just using `SHIFT+Arrow`,
+while it will do multiline selection in VSCode).
+
+**SHIFT+Home/End**: Select the line from your cursor position up to the end of
+the current line, in the way of the arrow you pressed (left/right).
+
+**SHIFT+PgUp/PgDn**: Select lines above/below, starting from your cursor
+position.
+
+## Shell
+
+**CTRL+K**: Deletes from the cursor to the end of the line. Typically useful
+when you copied a line (or modify an existing one) and wants to get rid of part
+of it.
+
+## Nano
+
+**CTRL+K**: Cut the cursor's line. Typically useful to get rid of lines quickly,
+or to move lines. It can be done multiple time back to back to cut multiple
+lines. Use `CTRL+U` to paste the line(s) you just cut.
+
+**CTRL+U**: Paste the line(s) you cut with `CTRL+K`
+
+> [!TIP]
+> Nano has a built-in spell checker, just press `CTRL+T` to loop through errors,
+> it conveniently suggest replacements. I don't use it, but know it exists.
