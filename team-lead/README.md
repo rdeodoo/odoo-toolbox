@@ -161,3 +161,16 @@ It shouldn't be too hard for you to sort your team members in order on the
 
 > [!TIP]
 > Remember: there is not a single way for someone to exceed expectation
+
+
+
+
+
+
+
+
+
+
+TODO:
+
+Check if worth a point like "Work for them, don't have them work for you"

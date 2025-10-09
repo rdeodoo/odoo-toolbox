@@ -1217,6 +1217,10 @@ impossible to use/understand spaghetti commits history:
 
 ![Spaghetti History Merge Commit](img/spaghetti-history-merge-commit.png)
 
+TODO (copy paste of my own pad):
+What kind of commit is this.. https://github.com/odoo-ps/psus-dme-express/commit/68335e1e12fec3c3ee7bccf551b273745284d2d8#diff-6a5b8194e384c756430f0a5b2895127b573d6176849a42137ff4bf0ee8eaee15
+
+
 ### Links (markdown)
 
 - Use full URLs, don't just link commit hashes or PR #number.
@@ -1539,6 +1543,9 @@ To mention:
   - github tricks:
     - CTRL + click fold all files
     - CTRL+? then Y to canonical url
+- Find back the video about "the elephant in the room" and use it to confirm what he says and explain that it actually makes it complicated to anyone jumping in the code because of that, it's not like we can ignore all errors / linters issues
+- For TL: Explain that the end goal is to become useless. As long as you are needed, you did not succeed in your mission. Your only goal is to have people not needing you.
+- check my bookmark
 
 
 Explain that in ps tech, we really don't care as much as in RD to be inheritable,
