@@ -680,16 +680,16 @@ Do exactly:
 ```py
 def a_method(self):
     # This method is copy pasted and contains a few PATCHES
-    some_extisting_code()
+    ..some_extisting_code_block..
     # PATCH START: Change domain
     domain = [('modified', '=', True)]
     # PATCH END
-    some_existing_code_using_domain()
-    some_other_code()
+    ..some_existing_code_block_using_domain..
+    ..some_otherexisting__code_block..
     # PATCH START: Write the new field on the found records
     found_records.write({'new_field': True})
     # PATCH END
-    some_finale_code()
+    ..some_final_existing_code_block..
 ```
 
 <details>
@@ -1531,6 +1531,8 @@ To mention:
 - https://en.wikipedia.org/wiki/Single-responsibility_principle
 - https://en.wikipedia.org/wiki/Cyclomatic_complexity
 
+- Again: https://github.com/odoo-ps/psus-sun-and-ski/pull/166/files#diff-a96a2cb95b07478f2bfe92a2e4299fac4b6e1dbda2cfa49c5a47fd9d20d19934R129-R131
+
 
 
 
@@ -1546,6 +1548,7 @@ To mention:
 - Find back the video about "the elephant in the room" and use it to confirm what he says and explain that it actually makes it complicated to anyone jumping in the code because of that, it's not like we can ignore all errors / linters issues
 - For TL: Explain that the end goal is to become useless. As long as you are needed, you did not succeed in your mission. Your only goal is to have people not needing you.
 - check my bookmark
+- section about sending and receiving feedback (i have a mail or something about this sent to ps tch) -> it's the only way to evolve
 
 
 Explain that in ps tech, we really don't care as much as in RD to be inheritable,

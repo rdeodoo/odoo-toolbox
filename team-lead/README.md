@@ -26,6 +26,52 @@ over time.
 > Make sure they are on track to become autonomous. They should always research
 > a bit by themselves before asking for help. There is a thin balance to find.
 
+
+## Your goal is to become useless
+
+You should elevate your team, not make them dependent of you. If this was a
+game, the end goal would be for you to make them all fully autonomous and not
+needing anything from you.
+
+You should make it so:
+- They have enough self-confidence to speak up in the company on their own
+- They learnt everything they had to learn from you, process wise, vision wise
+  or technically
+
+If you feel irreplaceable, or feel that if you were not there things would go
+south, it means your work is either:
+- **not finished**: if you have newcomers, they obviously need you, it's a repeat
+                process with every newcomer
+- or **not done properly**: if you only have "old" persons in your team, and they
+  still need you more than "very rarely", something is wrong. Wrong with you, or
+  wrong with them. But something is to "fix".
+
+## Work for them, don't have them work for you
+
+If **people work for you**, you are just a useless part of the chain /
+hierarchy.\
+You probably bring close to no value, and if you were not there, people could do
+their job and report to someone else instead.
+
+If **you work for people**, you are elevating them, empowering them. You'd be
+adding a few more horse power in their engine.
+
+Good:
+- Someone is stuck on something for hours, you check with them but can't help
+  them quickly. Ask them to work on something else while you are looking for a
+  solution **for them**. Of course, don't just provide the solution, explain how
+  you found it.
+- Review their code, be picky, **take every opportunity** to share more than you
+  should. Maybe they know, maybe they don't.
+
+
+Bad:
+- Constantly ask people to report to you about what they do, their progress, ..
+- Try to find someone else to help someone instead of helping yourself. Don't
+  just be a dispatcher.
+
+TODO: Maybe find some more Good/BAd exemples?
+
 ## Take the hits for your team
 
 If someone do something wrong while doing their best, you should always take
@@ -162,15 +208,29 @@ It shouldn't be too hard for you to sort your team members in order on the
 > [!TIP]
 > Remember: there is not a single way for someone to exceed expectation
 
+## Put the spotlight on them, not on you
+
+If you are a TL, you already gained the company's trust. Don't take credit for
+everything your team is doing. Do the opposite. Fully credit them when you are
+doing something together, let them shine.
+
+Stay in the shadow, make them shine. They will see what you do, they will be
+grateful, they will naturally make sure what you do is known to others, that's
+how you'll get some recognition back.
+
+## Let people decide
+
+Whenever possible, let them decide. Give them responsibilities. Let them take
+ownership. They will
 
 
+--- TODO ---
+- Try to detect if someone is uncomfortable with something, someone, but doesn't
+  speak up.
+- Have a feeling at what everyone is producing: code wise (technical level,
+  quantity, speed, complexity..), help wise (spending time help others), without
+  relying on KPIs. KPIs can (and will) be faked. Trust your guts. See beyond the
+  surface.
 
-
-
-
-
-
-
-TODO:
-
-Check if worth a point like "Work for them, don't have them work for you"
+- Keeping some things you know just for you, to keep an edge on your team. This
+  one is the worst thing you can do, by far.
