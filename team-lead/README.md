@@ -97,7 +97,7 @@ When you have the chance, you should dig into what they don't know.
 It's impossible for someone to ask you about something they don't know,
 because.. they don't know.\
 It's your job to read between the lines and to always go further than what they
-asked. Take every opportunity to cover more than the initial request.\
+asked. Take every opportunity to cover more than the initial request.
 
 Pay attention to everything, for instance while you look at people navigating in
 their IDE, shell or browser, spot the shortcuts or tools that you would use to
@@ -155,13 +155,13 @@ can remove a step, do it.
 ## Be dedicated to the company
 
 Odoo is a freaking awesome company. If it's your first company, you are probably
-miles away to realizing it.\
+miles away to realizing it.
 
 Make sure people understand it.\
 Make sure people don't think the company owes them everything while they don't
 owe the company anything.\
 Working in Odoo is a win-win relationship, it's one of your top priority to make
-sure people realize that.\
+sure people realize that.
 
 We have:
 - infinite freedom

@@ -1,5 +1,9 @@
 # Method splitting: why less is more (personal opinion)
 
+_Programs must be written for people to read, and only incidentally for
+machines to execute._
+—Abelson & Sussman, Structure and Interpretation of Computer Programs
+
 TODO
 
 Write this in a separate wiki, and add a link here

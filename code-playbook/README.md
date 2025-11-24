@@ -84,14 +84,14 @@ Remember, once your code is done, it will:
 
 ### Use `filtered()`
 
-Don't
+Don't:
 ```py
 for line in orders.order_line:
     if line.display_type
         continue
     do_some_code()
 ```
-Do
+Do:
 ```py
 for line in orders.order_line.filtered(lambda l: not l.display_type):
     do_some_code()
@@ -138,12 +138,12 @@ order.show_configuration_warning = order.is_rental_order and any(
 `mapped()` is only useful to read **non-relational** fields on recordset.\
 Keep it simple for relational fields.
 
-Don't
+Don't:
 ```py
 product = orders.order_line.mapped('product_id')
 product_ids = orders.order_line.product_id.mapped('ids')
 ```
-Do
+Do:
 ```py
 product = orders.order_line.product_id
 product_ids = orders.order_line.product_id.ids
@@ -199,18 +199,18 @@ issues.
 
 ### Use `write()` correctly
 
-When writing on a single field, do
+When writing on a single field, do:
 ```py
 # Clear and simple
 partner.name = "Robert"
 ```
-Don't
+Don't:
 ```py
 # Verbose and complicated for no reason
 partner.write({'name': "Robert"})
 ```
 
-When writing on multiple fields, do
+When writing on multiple fields, do:
 ```py
 # Single `write()` call
 partner.write({
@@ -219,7 +219,7 @@ partner.write({
     'size': 170,
 })
 ```
-Don't
+Don't:
 ```py
 # 3 separate `write()` calls instead of 1
 partner.name = "Robert"
@@ -247,6 +247,7 @@ def get_domain(self):
 Never use fstring or string interpolation directly.\
 This one is detailed in the Coding Guidelines [Use Translation method Correctly]
 section.
+
 Don't:
 ```py
 _('Record %s cannot be modified!' % record)  # Mind the `%`
@@ -562,7 +563,7 @@ If those are already an obvious dependency of another one, don't mention it.\
 While it might looks helpful to list everything when the list is short, it
 quickly gets out of control.
 
-Don't
+Don't:
 ```py
 'depends': [
     'website_sale',
@@ -572,7 +573,7 @@ Don't
     'rating',
 ],
 ```
-Do
+Do:
 ```py
 'depends': [
     'website_sale_renting',
@@ -642,12 +643,12 @@ something.
 ### Useless checks and fallbacks
 
 #### Empty recordset loop
-Don't do
+Don't do:
 ```py
 if recs:
     for rec in recs:
 ```
-Do
+Do:
 ```py
 for rec in recs:
 ```
@@ -684,11 +685,11 @@ will default on falsy values:
 
 In the same way as above, the ORM is capable and designed for it:
 
-Don't
+Don't:
 ```py
 if partner and partner.order_id and partner.order_id and partner.order_id.company_id and partner.order_id.company_id.name:
 ```
-Do
+Do:
 ```py
 if partner.order_id.company_id.name:
 ```
@@ -704,11 +705,11 @@ You want the ORM to invalidate the cache and recompute your method **only** if
 If `field_id` record is changed, but `field_id.rec_ids.record_id` still is the
 same record, there is no need to recompute the method.
 
-Don't
+Don't:
 ```py
 @api.depends("field_id", "field_id.rec_ids", "field_id.rec_ids.record_id")
 ```
-Do
+Do:
 ```py
 @api.depends("field_id.rec_ids.record_id")
 ```
@@ -722,7 +723,7 @@ Number notation is deprecated and will be removed at some point. `Commands` is
 straightforward and super explicit. using number notation is like purposely
 trying to obfuscate your code.
 
-Don't
+Don't:
 ```py
 record.line_ids = [
     (0, 0, {'name': 'New line'}),      # create
@@ -731,7 +732,7 @@ record.line_ids = [
     (6, 0, [1, 2, 3]),                 # replace with ids
 ]
 ```
-Do
+Do:
 ```py
 record.line_ids = [
     Command.create({'name': 'New line'}),
@@ -1130,11 +1131,11 @@ Given this method:
 def my_method(self, order, partner, amount, company_id=None, template='c1', name='')
 ```
 
-Don't
+Don't:
 ```py
 record.my_method(order, partner, 30, 1, 'c2')
 ```
-Do
+Do:
 ```py
 record.my_method(order, partner, 30, company_id=1, template='c2')
 ```
@@ -1339,11 +1340,11 @@ impossible to use/understand spaghetti commits history:
 `ids` exists even on single recordset, it's a convenient way to get the `id`
 inside an array directly.
 
-Don't
+Don't:
 ```py
 company_ids = [order.company_id.id]
 ```
-Do
+Do:
 ```py
 company_ids = order.company_id.ids
 ```
@@ -1376,7 +1377,7 @@ if (
     self.env.user.has_group('some_module.some_group')
 )
 ```
-Do
+Do:
 ```py
 if (
     order.move_ids.filtered(lambda move: move.is_something and not move.amount_field > 0)
@@ -1404,7 +1405,7 @@ Never construct / concat URLs manually. Use the `url_join` method.
 You should use `t-out` on elements directly. Don't create a `<t/>` just for it,
 it makes code complicated.
 
-Don't
+Don't:
 ```xml
 <RecordCode>
     <t t-out="record_code"/>
@@ -1416,7 +1417,7 @@ Don't
     <t t-out="system_time"/>
 </SystemTime>
 ```
-Do
+Do:
 ```xml
 <RecordCode t-out="record_code"/>
 <RecordName t-out="record_name"/>
@@ -1489,12 +1490,12 @@ Do:
 
 #### Records concat
 
-Don't
+Don't:
 ```py
 website.page_ids = website.additional_page_ids + website.page_id
 # res.partner(1, 1)
 ```
-Do
+Do:
 ```py
 website.page_ids = website.additional_page_ids | website.page_id
 # res.partner(1)
@@ -1621,7 +1622,7 @@ No one is going to inherit our domain in the middle of a method. And if we ever
 need to do it in another module later, we can simply create the hook at that
 time: KISS and no premature optimization.
 
-> [!INFO]
+> [!NOTE]
 > See this article for my complete thoughts on the subject, including examples:
 > [Method splitting: why less is more (personal opinion)](../misc-tips/method-splitting.md)
 
