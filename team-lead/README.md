@@ -234,3 +234,8 @@ ownership. They will
 
 - Keeping some things you know just for you, to keep an edge on your team. This
   one is the worst thing you can do, by far.
+
+
+- Never feel like you are taking someone as stupid when you explain them things, don't hesitate to ask them if they know something obvious, or don't even ask and tell them.
+
+- Let people fail, fully trust them, give them full responsibilities, fix mistakes, don't try to prevent it by all mean

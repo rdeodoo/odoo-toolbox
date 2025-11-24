@@ -2,16 +2,20 @@
 
 ## Visual git repository hints
 
-You **should** have a tool that turns your bash prompt when you enter a `git`
-repository. You should because it will make your life a thousand time easier. It
-will save you an absurd amount of time.
+You **should** have a tool that change the UI of your bash prompt when you enter
+a `git` repository.\
+It will directly let you know information like the current branch name, the
+number of commit you need to pull or to push, the number of pending changes you
+have and so on.\
+It will make your life a thousand time easier and save you a lot of time.
 
 This is how it looks like with my configuration, even though there are a lot of
 different tools and configs to achieve this:
 
-![Git Bash Prompt](git-bash-prompt.png)
+![Git Bash Prompt](img/git-bash-prompt.png)
 
-You can find the configuration there: TODO link to gitbashprompt folder
+> [!TIP]
+> 👉 Find the steps to install it and my config here: [Git Bash Prompt]
 
 ## Auto fetch
 
@@ -193,4 +197,5 @@ This is especially useful for your community and enterprise repositories where
 you most likely always just want to update your branch and ignore what you have
 locally.
 
-## Terminator
+
+[Git Bash Prompt]: git-bash-prompt/README.md

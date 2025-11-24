@@ -117,17 +117,23 @@ timeit.timeit('any(m.references for m in a)', globals=globals(), number=1000)
 # Takes 0.02652950100309681 second
 ```
 
-TODO show example with filtered and conditions
+Don't:
+```py
+order.show_configuration_warning = order.is_rental_order and any(
+    order.order_line.filtered(lambda line: line.is_something and not line.xyz)
+)
+```
+Do:
+```py
+order.show_configuration_warning = order.is_rental_order and any(
+    line.is_something and not line.xyz for line in order.order_line
+)
+```
 
-            order.show_din_configuration_warning = order.is_rental_order and any(
-                order_line.filtered(lambda line: line.is_ski_line and not line.din)
-                for order_line in order.order_line
-            )
-            order.show_din_configuration_warning = order.is_rental_order and any(
-                ine.is_ski_line and not line.din for line in order.order_line)
-            )
+### Don't use `mapped()` for relational fields
 
-### Avoid `mapped()` on relational fields
+`mapped()` is only useful to read **non-relational** fields on recordset.\
+Keep it simple for relational fields.
 
 Don't
 ```py
@@ -223,18 +229,14 @@ partner.size = 170
 Never concat domains yourself with list's `append()` or `+`.\
 Use the `expression.OR()/AND()` to avoid bugs.
 
-TODO: Show example because along those line (this was produce the same sql)
 ```py
-from odoo.osv.expression import AND, TRUE_DOMAIN, normalize_domain
+from odoo.osv.expression import AND
 
-a = ['|', ('name', '=', 'RDE'), ('name', '=', 'QSM')]
-b = ['|', ('website', '=', 'RDE'), ('website', '=', 'QSM')]
-
-c =  AND([a, b])
-d = a + b
-
-self.env['res.partner'].with_context(active_test=False).search(c)
-self.env['res.partner'].with_context(active_test=False).search(d)
+def get_domain(self):
+    res = super().get_domain()
+    new_domain = [('field', '=', 'value')]
+    res = OR([res, new_domain])
+    return res
 ```
 
 ### `logger()` and `_()` params
@@ -317,17 +319,61 @@ pasted the node (which would be sort of "frozen" at the time you copied it).
 This can of course be used on a whole DOM section, if for instance you want to
 wrap an entire part of a view inside a new node.
 
-TODO: example in `<details/>`
+<details>
+
+<summary>See a small concrete example</summary>
+
+Given this template:
+```xml
+<td name="td_quantity" class="o_td_quantity text-end">
+    <span t-field="line.product_uom_qty" class="text-nowrap">3</span>
+    <span t-field="line.product_uom">units</span>
+    <span t-if="line.product_packaging_id">
+        (<span t-field="line.product_packaging_qty" t-options='{"widget": "integer"}'/> <span t-field="line.product_packaging_id"/>)
+    </span>
+</td>
+```
+
+If you want to have an empty `<td/>`, instead of:
+- adding as many xpaths as there are children to add a `t-if` on each nodes
+- repeating the `if` condition on each noce
+- having your code broken if any node is removed
+- having your code not working if a new node is added (won't receive `t-if`)
+
+You could just do this:
+```xml
+<xpath expr="//td[@name='td_quantity']" position="replace">
+    <t t-if="a_new_custom_condition">
+        <t>$0</t>
+    </t>
+    <t t-else="">
+        <td/>
+    </t>
+</xpath>
+```
+
+</details>
 
 #### `Move` Xpath
 
 Xpath `position` attribute comes with a handy `move` value.
 
-TODO example
-
-
-
-
+Don't:
+```xml
+<!-- Remove field -->
+<xpath expr="//field[@name='barcode']" position="replace"/>
+<!-- Add it elsewhere -->
+<xpath expr="//field[@name='name']" position="after">
+    <field name="barcode"/>
+</xpath>
+```
+Do:
+```xml
+<!-- Move it where you need -->
+<xpath expr="//field[@name='name']" position="after">
+    <xpath expr="//field[@name='barcode']" position="move"/>
+</xpath>
+```
 
 
 ## Style
@@ -538,13 +584,39 @@ You need to bump the version whenever one of your PR/commit(s) change is
 modifying the database (structure or values).
 
 This is required for Odoo.sh to automatically update your module and apply your
-changes in DB.\
+changes in DB (or anyone pulling your code locally and updating the modules).\
 If you don't bump it, a manual module update will be required. This is always
 bad because you will need to do that twice: once on the staging when your dev
-branch is merged and once on the production when it is sync'd with the staging.
+branch is merged and once on the production when it is sync'd with the staging.\
+Plus, you **will** eventually forget.
 
-Here is a non-exhaustive list of changes that require a module update:
-TODO
+Only a very limited changes actually need a module update. Here is a
+non-exhaustive list of changes that require a module update:
+- Adding a new stored field
+- Turning a non stored field into a store field
+- Modifying a backend view (ir.ui.view, not static view)
+- Creating a new record (action, menu, tax, whatever)
+- Creating a new model
+
+All of this require a module update, since it's actually altering the database
+structure and/or data.
+
+On the other hand, none of those changes require a module update or a manifest
+bump. Just restarting the server is enough if you:
+- Change a static xml template
+- Change a translation (.pot) file
+- Change python business method
+- Change a js or css file
+- Add an image
+- Add a computed (non stored) field
+- Add a o2m (inverse of a m2o) field
+- Add a test
+- Add a new css or js file
+
+> [!IMPORTANT]
+> The same rule apply to Odoo standard bugfixes: anything modifying the database
+> and requiring a module update can't be done in stable.
+
 
 ### Alphabetical Ordering
 
@@ -962,7 +1034,7 @@ chars. The title will be cut with ellipsis.
 Code blocks and links will obviously go over the 72 chars limit.
 
 > [!TIP]
-> Use markdown for you links, see TODO add links to markdown
+> Use markdown for you links, see [Markdown Links](#links-markdown)
 
 **For code**: no strict rule but try to have it fit under 100 chars as a rule of
 thumbs.
@@ -976,8 +1048,24 @@ this until reaching the end of your commit message.
 > [!TIP]
 > You can add **rulers** in your IDE, but also in your terminal when inside a
 > `git commit` prompt.
-> 👉 See how to in my config TODO add link to my config
-
+>
+> For VSCode, add this in your `settings.json`:
+> ```js
+> "editor.rulers": [
+>     80,
+>     100
+> ],
+> ```
+>
+> If you selected `Nano` as your git commit prompt, add this in your
+> `~/.gitconfig` file:
+> ```
+> [core]
+>     excludesfile = ~/.gitignore
+>     editor = nano -J 73
+> ```
+> `-J 73` will add a ruler on column 73, visually letting you know where to stop
+> your line.
 
 ### Save indentation level
 
@@ -1066,11 +1154,6 @@ order.my_method('something', 'no', 'discounted')  # See the quotes
 1. Be consistent with single/double quotes
 2. Be consistent with using explicit property naming
 
-> [!TIP]
-> See TODO my article about single/double quote
-> TODO: point about single/double quotes? mention that it's ok to not respect it, but don't mix it!!
-
-
 
 
 
@@ -1100,16 +1183,16 @@ a = {'1':   '1',  # Notice the multiple spaces after operator here
 }
 ```
 
-See [How to install flake8 linter](TODO)
+👉 See [How to install flake8 linter](../linters/README.md)
 
 ### Javascript
 You should use `eslint`, ideally `v8.27`.
 
-See [How to install eslint linter](TODO)
+👉 See [How to install eslint linter](../linters/README.md)
 
 > [!WARNING]
-> Don't use `eslint` > `v9`, they refactored everything and you won't be able to
-> easily install it. Among other things, the way the configuration files work
+> Don't use `eslint` >= `v9`, they refactored everything and you won't be able
+> to easily install it. Among other things, the way the configuration files work
 > has been fully changed.
 
 
@@ -1183,8 +1266,9 @@ blaming the code.
 ### Never use merge commit
 
 There are a few reasons not to use it:
-- The history becomes ugly, without any added value since we mostly with little
-  branches at a time, we mostly work with linear history anyway.
+- The history becomes ugly, without any added value since we mostly work with a
+  limited amount of branches at a time, we mostly work with linear history
+  anyway.
 - History becomes a mess overtime, adding extra nested hierarchy levels even
   for simple branches targeting the staging.
 - Merge commit have no sense/meaning in itself most of the time. Some will just
@@ -1198,7 +1282,7 @@ There are a few reasons not to use it:
   phase later.
 
 There are some more reasons, but those ones are related to the wrong usage
-people make of merge commit, not merge commit iself:
+people make of merge commit, not merge commit itself:
 - People ship temporary/wip commit in the merge commits
   ![Merge Commit Wip Commits](img/merge-commit-wip-commit.png)
   ![Merge Commit Wip Commits (2)](img/merge-commit-wip-commit-2.png)
@@ -1209,17 +1293,14 @@ people make of merge commit, not merge commit iself:
 - Doing the merge commit through the GIT UI creates commit with a weird and
   incorrect author email (autogenerated noreply)
   ![Wrong Author Merge Commit](img/wrong-author-merge-commit.png)
-  > [!TIP]
-  > You can fully disable merge commit button from PR on the repository settings.
+
+> [!TIP]
+> You can fully disable merge commit button from PR on the repository settings.
 
 In practice, it is always wrongly used and systematically lead to awful and
 impossible to use/understand spaghetti commits history:
 
 ![Spaghetti History Merge Commit](img/spaghetti-history-merge-commit.png)
-
-TODO (copy paste of my own pad):
-What kind of commit is this.. https://github.com/odoo-ps/psus-dme-express/commit/68335e1e12fec3c3ee7bccf551b273745284d2d8#diff-6a5b8194e384c756430f0a5b2895127b573d6176849a42137ff4bf0ee8eaee15
-
 
 ### Links (markdown)
 
@@ -1538,6 +1619,7 @@ To mention:
 
 == TODO LIST ==
 - pages to create (Check if I can have a "See" link from here to this page):
+  - mention git rh to replace pull
   - shortcut chrome
   - shell git visual
   - keyboard shortcut
