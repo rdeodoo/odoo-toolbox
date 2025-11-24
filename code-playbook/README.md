@@ -2,8 +2,8 @@
 
 ![Designed for: Odoo PS Tech](https://img.shields.io/badge/Designed%20for-Odoo%20PS%20Tech-017E84)
 
-_This document is following the official [Coding Guidelines] which you
-should read first._
+_This document is following the official [Coding Guidelines] which you should
+read first._
 
 It contains a list of the most **recurring mistakes**, implicit **conventions**
 and non-written **best practices** related to Odoo coding.\
@@ -35,6 +35,9 @@ Remember, once your code is done, it will:
 - **likely** have to be debug and fixed, possibly multiple times
 - **always** be read and upgraded, multiple times, by multiple people
 
+> [!TIP]
+> This article from David Goodger about [Code Style in Python] is also a very
+> good read.
 
 ## Table of Contents
 * [Technical Details](#technical-details)
@@ -1623,6 +1626,7 @@ time: KISS and no premature optimization.
 > [Method splitting: why less is more (personal opinion)](../misc-tips/method-splitting.md)
 
 [Coding Guidelines]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html
+[Code Style in Python]: https://david.goodger.org/projects/pycon/2007/idiomatic/handout.html
 [official]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#pep8-options
 [autolink]: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/configuring-autolinks-to-reference-external-resources
 [Git Trailers]: https://git-scm.com/docs/git-interpret-trailers
