@@ -634,7 +634,7 @@ something.
 > when there is a limited number of elements to sort. While this is fair to say,
 > in practice we have to follow a "all white or all black" rule, or people will
 > just over-abuse or ignore the rule. At best, it will create useless debates.
-> 👉 See my "all white or all black" opinion article (TODO: write it in a separate article), inspire from https://github.com/odoo/odoo/pull/133905#discussion_r1340349356
+> 👉 See my "all white or all black" opinion [article](../misc-tips/all-black-or-all-white/README.md)
 
 ### Useless checks and fallbacks
 
@@ -917,7 +917,8 @@ won't be as self-explanatory as you thought it would be.
 > decided by the developer) also exists for methods, which is one of the reason
 > to not blindly follow the "*Single-responsibility principle*" which is not as
 > true as most people think.
-> 👉 See TODO my link to not encapsulate code "a outrance"
+> 👉 See my link to not over abuse code encapsulation:
+> [Method splitting: why less is more (personal opinion)](../misc-tips/method-splitting.md)
 
 Don't:
 ```py
@@ -1597,48 +1598,29 @@ really is, and brings confusion when someone opens the project.
 > When opening an SH project, if it looks messy with old dev branches, ideally
   ping the devs and ask them to clean it up. Takes 2 min, keeps things clear.
 
-### TODO Method splitting (personal opinion)
+### Method splitting (personal opinion)
 
+Don't blindly follow the "[Single-responsibility principle]" and split your
+methods just for the sake of it.
 
-Write this in a separate wiki, and add a link here
-Show jden method for example (a lot of bugs bcomes clear)
-+ illustrate https://github.com/odoo/odoo/pull/133905#discussion_r1340267589
-+ explain that it causes bug, show many example from my review
-  find those, but one is https://github.com/odoo-ps/psus-whole-latte-love/pull/3#discussion_r2283358077
-  https://github.com/odoo-ps/psus-whole-latte-love/pull/3#discussion_r2283354649
-Also explain that names add noise
-It also hides bug https://github.com/odoo-ps/psus-whole-latte-love/pull/3#discussion_r2283151502
-To mention:
-- https://en.wikipedia.org/wiki/Single-responsibility_principle
-- https://en.wikipedia.org/wiki/Cyclomatic_complexity
+There is a whole other side of this story that is often ignored: when
+reading/debugging code, having to jump through multiple methods to understand a
+single flow is a nightmare and adds a lot of complexity.\
+This is what I call the "maze effect".\
+It adds a lot of technical debt.
 
-- Again: https://github.com/odoo-ps/psus-sun-and-ski/pull/166/files#diff-a96a2cb95b07478f2bfe92a2e4299fac4b6e1dbda2cfa49c5a47fd9d20d19934R129-R131
+Surprisingly, based on my experience, it will very often hide bugs and issues
+that you would have easily spotted if everything was in the same method.
 
+This is even more true in PS Tech, where unlike R&D, we don't care as much about
+inheritability. No one will ever inherit our methods to customize them.\
+No one is going to inherit our domain in the middle of a method. And if we ever
+need to do it in another module later, we can simply create the hook at that
+time: KISS and no premature optimization.
 
-
-
-== TODO LIST ==
-- pages to create (Check if I can have a "See" link from here to this page):
-  - mention git rh to replace pull
-  - shortcut chrome
-  - shell git visual
-  - keyboard shortcut
-  - git basics - enough for years in Odoo
-  - github tricks:
-    - CTRL + click fold all files
-    - CTRL+? then Y to canonical url
-- Find back the video about "the elephant in the room" and use it to confirm what he says and explain that it actually makes it complicated to anyone jumping in the code because of that, it's not like we can ignore all errors / linters issues
-- For TL: Explain that the end goal is to become useless. As long as you are needed, you did not succeed in your mission. Your only goal is to have people not needing you.
-- check my bookmark
-- section about sending and receiving feedback (i have a mail or something about this sent to ps tch) -> it's the only way to evolve
-
-
-Explain that in ps tech, we really don't care as much as in RD to be inheritable,
-no one is going to inherit our domain in the middle of a method. And if we ever
-need to do it in another module later, we can simply create the hook at that time.
-
-
-
+> [!INFO]
+> See this article for my complete thoughts on the subject, including examples:
+> [Method splitting: why less is more (personal opinion)](../misc-tips/method-splitting.md)
 
 [Coding Guidelines]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html
 [official]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#pep8-options
@@ -1647,4 +1629,4 @@ need to do it in another module later, we can simply create the hook at that tim
 [Trailing spaces extension]: https://marketplace.visualstudio.com/items?itemName=shardulm94.trailing-spaces
 [Use Translation method Correctly]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#use-translation-method-correctly
 [pep8 section]: https://peps.python.org/pep-0008/#should-a-line-break-before-or-after-a-binary-operator
-
+[Single-responsibility principle]: https://en.wikipedia.org/wiki/Single-responsibility_principle

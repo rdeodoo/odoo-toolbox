@@ -70,7 +70,7 @@ Bad:
 - Try to find someone else to help someone instead of helping yourself. Don't
   just be a dispatcher.
 
-TODO: Maybe find some more Good/BAd exemples?
+TODO: Find some more Good/Bad exemples
 
 ## Take the hits for your team
 
@@ -107,13 +107,12 @@ know (maybe they do).
 For instance:
 - if you see someone struggling to retrieve a previous command in his shell,
   ensure they know about CTRL+R reverse search and/or `history-search-backward`
-  (FN+up arrow)
-  TODO add "see my keyboard shortcut page"
+  (FN+up arrow)\
+  See my keyboard [shortcut page](../misc-tips/keyboard-shortcuts.md)
 - if you see someone manually navigating on odoo.com to go to a task ID, or
   manually going through runbot search to find a PR/branch, ensure they know
-  about browser search shortcut
-  TODO add "see my chrome shortcut"
-- TODO: add one point for each example
+  about browser search shortcut\
+  See my browser [shortcut page](../misc-tips/browser-shortcuts.md)
 
 ## Avoid authoritarian management
 
