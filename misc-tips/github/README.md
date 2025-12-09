@@ -45,3 +45,10 @@ changes:
 
 - With hiding whitespace changes:
   ![Hide whitespace changes example](img/hide-whitespaces.png)
+
+## .patch trick
+TODO
+
+## Check user name and email
+TODO
+You can apply .patch

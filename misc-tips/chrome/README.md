@@ -32,7 +32,7 @@ search kicks in.
 being the placeholder that will be replaced by what you typed.
 
 Example:
-![Shortcut Settings](shortcut-settings.png)
+![Shortcut Settings](img/shortcut-settings.png)
 
 ### Handful shortcuts
 

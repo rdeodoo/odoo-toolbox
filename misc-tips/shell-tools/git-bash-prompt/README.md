@@ -13,10 +13,15 @@ It will make your life a thousand time easier and save you a lot of time.
 This is how it looks like with my configuration, even though there are a lot of
 different tools and configs to achieve this:
 
-![Git Bash Prompt](../img/git-bash-prompt.png)
+![Git Bash Prompt](/img/git-bash-prompt.png)
 
 I am using `magicmonty`'s tool that you can find here:
 https://github.com/magicmonty/bash-git-prompt
+
+> [!TIP]
+> A lot of tool exist to do this, like `starship` to name one. This is an
+> example of their [Tokyo Night] preset:
+> ![Starship Prompt](/img/starship-prompt.png)
 
 You can go through the repository documentation or follow those steps:
 
@@ -72,3 +77,5 @@ You can go through the repository documentation or follow those steps:
     GIT_PROMPT_THEME=Single_line_Ubuntu_RDE
     source ~/.bash-git-prompt/gitprompt.sh
     ```
+
+[Tokyo Night]: https://starship.rs/presets/tokyo-night/

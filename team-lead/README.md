@@ -1,5 +1,30 @@
 # Being a team leader
 
+In Odoo, being a team lead is not about managing people. We fully trust people
+until they give us a reason not to. There is no micromanagement, no authority,
+no hierarchy.
+
+This is a though role, because whatever you read about "being a good manager"
+won't apply here. Odoo "management" is truly unique and in a lot of points
+opposite to what is usually done in companies:
+- no corporate bullshit, KISS and focus on the product
+- no useless recurring meetings
+- little to no KPIs
+- flat hierarchy
+- full trust and autonomy are given by default, people don't have to earn it,
+  they just have to not lose it
+
+> [!TIP]
+> With 60%+ growth year after year, a lot of people will become TL soon.
+
+As this is not an easy role, as new TLs often appear, and since I have been a TL
+for over 5 years now (first in the Belgian "Website" R&D team, then in the US
+Buffalo "PS Tech" department), I listed here the most important points to keep
+in mind when being a team lead in Odoo.\
+Hopefully this will help you understand better what is expected from you as a TL
+but also understand your TL better and know what to expect if you are not one
+yet.
+
 ## Put others first, always
 
 Stop doing what you are doing when someone ask for help.
@@ -70,7 +95,7 @@ Bad:
 - Try to find someone else to help someone instead of helping yourself. Don't
   just be a dispatcher.
 
-TODO: Find some more Good/Bad exemples
+TODO: Find some more Good/Bad examples
 
 ## Take the hits for your team
 
@@ -217,24 +242,77 @@ Stay in the shadow, make them shine. They will see what you do, they will be
 grateful, they will naturally make sure what you do is known to others, that's
 how you'll get some recognition back.
 
-## Let people decide
+## Give full trust
 
-Whenever possible, let them decide. Give them responsibilities. Let them take
-ownership. They will
+This is part of the Odoo's culture, full trust is given by default. We trust
+people until they give us a reason not to.
 
+In other companies, people have to "earn" trust. Not here.
 
---- TODO ---
-- Try to detect if someone is uncomfortable with something, someone, but doesn't
-  speak up.
-- Have a feeling at what everyone is producing: code wise (technical level,
-  quantity, speed, complexity..), help wise (spending time help others), without
-  relying on KPIs. KPIs can (and will) be faked. Trust your guts. See beyond the
-  surface.
+## Pay attention to the silent signals
 
-- Keeping some things you know just for you, to keep an edge on your team. This
-  one is the worst thing you can do, by far.
+Not everyone will tell you when something feels off.\
+Try to spot the subtle details: someone suddenly quieter in meetings, avoiding
+a topic, hesitating before answering, or looking tense around certain people.\
+Gently check in, one-on-one, without pressure. Most of the time, they'll open up
+if they feel safe. That's your job: create that space.
 
+## Trust your instinct more than KPIs
 
-- Never feel like you are taking someone as stupid when you explain them things, don't hesitate to ask them if they know something obvious, or don't even ask and tell them.
+Part of your job is to evaluate your team, ranking them from low to high
+performers.
 
-- Let people fail, fully trust them, give them full responsibilities, fix mistakes, don't try to prevent it by all mean
+You should have a natural sense of what each person is doing: how they code,
+how fast they move, the complexity they can handle, whether they help others,
+and their overall impact.
+
+Don't rely on KPIs for that, it's easy to fake and never capture the full
+picture.\
+Instead, trust your gut, your observations, your daily interactions. Don't just
+look at commits or tickets. Look at attitude, curiosity, consistency,
+ownership.\
+That's how you really know your team.
+
+## Never gatekeep knowledge
+
+Don't keep tricks, shortcuts, or insights for yourself just to "stay ahead."
+That's the **worst move** you can ever make as a leader.
+
+When you learn something useful, share it right away. The more your team knows,
+the stronger you become as a group.
+
+## Assume nothing, explain everything
+
+Never worry about "insulting" someone by explaining something they might already
+know. Just ask casually, or even better, explain it directly.\
+Most people appreciate clarity way more than you think.\
+And if they already knew it? It's fine, it was a good refresher.
+
+## Let them fall, but catch them fast
+
+Give full trust. Let them take ownership. Let them fail, that's how people learn
+and grow. That's how people fall in love with this company.
+
+Your job isn't to prevent every mistake; it's to be available to help and fix
+things quickly when something goes wrong and make sure they learn from it
+without fear.\
+As for everything, soak the pressure, take the hit for them. People naturally
+think mistakes are not tolerated. Make sure they know it's not the case.
+
+> [!WARNING]
+> If someone constantly makes the same mistake over and over, it's a sign that
+> either they are not fit for the company, or you are not doing your job
+> properly as a TL. Act accordingly.
+
+## Let people go
+
+If someone is not fit for the company, don't hesitate too long. The longer you
+wait, the more damage they will do to the company culture and productivity.
+
+Worse: you are not doing them a favor. You are making them stay in a place where
+they don't belong, and they can very well feel it every day, in the vast
+majority of cases.\
+There is nothing worse than feeling stuck somewhere where you feel like you are
+a burden for others.\
+Change your mindset: letting them go will allow them to find a place where they
+will fit perfectly and be more happy.
