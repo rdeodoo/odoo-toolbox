@@ -78,4 +78,9 @@ You can go through the repository documentation or follow those steps:
     source ~/.bash-git-prompt/gitprompt.sh
     ```
 
+4. Restart your terminal or reload your `~/.bashrc` config file:
+    ```bash
+    source ~/.bashrc
+    ```
+
 [Tokyo Night]: https://starship.rs/presets/tokyo-night/
