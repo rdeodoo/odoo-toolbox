@@ -21,9 +21,33 @@ As this is not an easy role, as new TLs often appear, and since I have been a TL
 for over 5 years now (first in the Belgian "Website" R&D team, then in the US
 Buffalo "PS Tech" department), I listed here the most important points to keep
 in mind when being a team lead in Odoo.\
-Hopefully this will help you understand better what is expected from you as a TL
-but also understand your TL better and know what to expect if you are not one
-yet.
+
+Hopefully this will help you understand better:
+- if you are a TL: what is expected from you as a TL
+- if you are not a TL yet: understand your TL better and know what to expect
+
+## Table of Contents
+
+- [Put others first, always](#put-others-first-always)
+- [Overestimate their time, underestimate yours](#overestimate-their-time-underestimate-yours)
+- [Your goal is to become useless](#your-goal-is-to-become-useless)
+- [Work for them, don't have them work for you](#work-for-them-dont-have-them-work-for-you)
+- [Take the hits for your team](#take-the-hits-for-your-team)
+- [Identify their gaps](#identify-their-gaps)
+- [Avoid authoritarian management](#avoid-authoritarian-management)
+- [Identify pain points](#identify-pain-points)
+- [Reduce processes and rules, don't add more](#reduce-processes-and-rules-dont-add-more)
+- [Be dedicated to the company](#be-dedicated-to-the-company)
+- [Preserve the Odoo culture](#preserve-the-odoo-culture)
+- [Know your team skills](#know-your-team-skills)
+- [Put the spotlight on them, not on you](#put-the-spotlight-on-them-not-on-you)
+- [Give full trust](#give-full-trust)
+- [Pay attention to the silent signals](#pay-attention-to-the-silent-signals)
+- [Trust your instinct more than KPIs](#trust-your-instinct-more-than-kpis)
+- [Never gatekeep knowledge](#never-gatekeep-knowledge)
+- [Assume nothing, explain everything](#assume-nothing-explain-everything)
+- [Let them fall, but catch them fast](#let-them-fall-but-catch-them-fast)
+- [Let people go](#let-people-go)
 
 ## Put others first, always
 
@@ -35,8 +59,7 @@ not the other way.
 
 ## Overestimate their time, underestimate yours
 
-Make it crystal clear that they are not wasting your time when they ask for your
-time.\
+Make it crystal clear that they are not wasting your time when they ask for it.\
 Make it clear that asking for your help/time is a **magic life hack** that turns
 1 hour into 5 hours. You will "waste" 1 hour, but they will "gain" 5 hours worth
 of experience. It's _that_ magic!
@@ -67,9 +90,9 @@ If you feel irreplaceable, or feel that if you were not there things would go
 south, it means your work is either:
 - **not finished**: if you have newcomers, they obviously need you, it's a repeat
                 process with every newcomer
-- or **not done properly**: if you only have "old" persons in your team, and they
-  still need you more than "very rarely", something is wrong. Wrong with you, or
-  wrong with them. But something is to "fix".
+- or **not done properly**: if you only have "experienced" persons in your\
+  team, and they still need you more than "very rarely", something is wrong.\
+  Wrong with you, or wrong with them. But something is to "fix".
 
 ## Work for them, don't have them work for you
 
@@ -105,7 +128,7 @@ responsibility and "shield" your team.
 Act as if it was your own fault, not theirs.
 
 Everyone do mistakes, as long as it's not happening too frequently, make sure
-they don't feel too bad about it. Take the chance to teach them "internally"
+they don't feel too bad about it. Take the chance to teach them "in private",
 after sorting out the issue for them.
 
 For instance, if someone accidentally deletes a client database, while always
@@ -133,11 +156,11 @@ For instance:
 - if you see someone struggling to retrieve a previous command in his shell,
   ensure they know about CTRL+R reverse search and/or `history-search-backward`
   (FN+up arrow)\
-  See my keyboard [shortcut page](../misc-tips/keyboard-shortcuts.md)
+  👉 See my keyboard [shortcut page](../misc-tips/keyboard-shortcuts.md)
 - if you see someone manually navigating on odoo.com to go to a task ID, or
   manually going through runbot search to find a PR/branch, ensure they know
   about browser search shortcut\
-  See my browser [shortcut page](../misc-tips/browser-shortcuts.md)
+  👉 See my browser [shortcut page](../misc-tips/browser-shortcuts.md)
 
 ## Avoid authoritarian management
 
@@ -226,8 +249,8 @@ Have a perfectly clear overview of what each member in your team is capable of.
 
 You should be able to have a good idea on who is developing quick, technically
 better, helping others more, has a good company culture.\
-It shouldn't be too hard for you to sort your team members in order on the
-"expectation scale" we use in Odoo (NI, ME, EE..).
+It shouldn't be too hard for you to sort your team members in a specific order
+on the "expectation scale" we use in Odoo (NI, ME, EE..).
 
 > [!TIP]
 > Remember: there is not a single way for someone to exceed expectation

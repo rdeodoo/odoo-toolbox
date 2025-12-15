@@ -5,9 +5,9 @@
 _This document is following the official [Coding Guidelines] which you should
 read first._
 
-It contains a list of the most **recurring mistakes**, implicit **conventions**
-and non-written **best practices** related to Odoo coding.\
-It also repeat some points mentioned in the official [Coding Guidelines] to add
+This document contains a list of the most **recurring mistakes**, implicit
+**conventions** and non-written **best practices** related to Odoo coding.\
+It also repeats some points mentioned in the official [Coding Guidelines] to add
 some explanation, example or emphasis on the importance to follow it.
 
 Those are important, because they make the code easier to read, easier to debug,
@@ -35,49 +35,66 @@ Remember, once your code is done, it will:
 - **likely** have to be debug and fixed, possibly multiple times
 - **always** be read and upgraded, multiple times, by multiple people
 
+I'll conclude this introduction with this famous quote:
+
+_Programs must be written for people to read, and only incidentally for
+machines to execute._
+
+_— Abelson & Sussman, Structure and Interpretation of Computer Programs_
+
 > [!TIP]
 > This article from David Goodger about [Code Style in Python] is also a very
 > good read.
 
 ## Table of Contents
-* [Technical Details](#technical-details)
-   * [Use `filtered()`](#use-filtered)
-   * [Avoid `mapped()` on relational fields](#avoid-mapped-on-relational-fields)
-   * [`api.depends` decorator](#apidepends-decorator)
-      * [No `write()` in computes](#no-write-in-computes)
-      * [Use `write()` correctly](#use-write-correctly)
-   * [Domain manipulation](#domain-manipulation)
-   * [Xpath Tricks](#xpath-tricks)
-      * [`$0` magic variable](#0-magic-variable)
-      * [`Move` Xpath](#move-xpath)
 
-* [Style](#style)
-   * [Trailing commas](#trailing-commas)
-   * [Naming and paths](#naming-and-paths)
-   * [Manifest dependencies](#manifest-dependencies)
-   * [Alphabetical Ordering](#alphabetical-ordering)
-   * [Empty recordset loop](#empty-recordset-loop)
-   * [Favor `Commands`](#favor-commands)
-   * [Comment your patches](#comment-your-patches)
-   * [Useless variables](#useless-variables)
-   * [Modules splitting](#modules-splitting)
-   * [Chars rule](#chars-rule)
+- [Technical Details](#technical-details)
+    - [Use `filtered()`](#use-filtered)
+    - [No `filtered()` or `mapped()` in `any()`](#no-filtered-or-mapped-in-any)
+    - [Don't use `mapped()` for relational fields](#dont-use-mapped-for-relational-fields)
+    - [`api.depends` decorator](#apidepends-decorator)
+    - [No `write()` in computes](#no-write-in-computes)
+    - [Use `write()` correctly](#use-write-correctly)
+    - [Domain manipulation](#domain-manipulation)
+    - [`logger()` and `_()` params](#logger-and-params)
+    - [Access Rights](#access-rights)
+    - [Limit your search](#limit-your-search)
+    - [Xpath Tricks](#xpath-tricks)
+        - [`$0` magic variable](#0-magic-variable)
+        - [`Move` Xpath](#move-xpath)
 
-* [Linting](#linting)
-   * [Python](#python)
-   * [Javascript](#javascript)
-   * [Trailing whitespaces](#trailing-whitespaces)
+- [Style](#style)
+    - [Trailing commas](#trailing-commas)
+    - [Naming and paths](#naming-and-paths)
+    - [Default values](#default-values)
+    - [Manifest dependencies](#manifest-dependencies)
+    - [Manifest version bump](#manifest-version-bump)
+    - [Alphabetical Ordering](#alphabetical-ordering)
+    - [Useless checks and fallbacks](#useless-checks-and-fallbacks)
+    - [Favor `Commands`](#favor-commands)
+    - [Comment your patches](#comment-your-patches)
+    - [Useless variables](#useless-variables)
+    - [Modules splitting](#modules-splitting)
+    - [Chars rule](#chars-rule)
+    - [Save indentation level](#save-indentation-level)
+    - [Passing args vs kwargs](#passing-args-vs-kwargs)
+    - [Be consistent](#be-consistent)
 
-* [Commit Message](#commit-message)
-   * [Task ID Reference](#task-id-reference)
-   * [Commit message matter](#commit-message-matter)
-   * [Never use merge commit](#never-use-merge-commit)
+- [Linting](#linting)
+    - [Python](#python)
+    - [Javascript](#javascript)
+    - [Trailing whitespaces](#trailing-whitespaces)
 
-* [Misc](#misc)
-   * [Odoo.sh dev branches](#odoosh-dev-branches)
+- [Commit Message](#commit-message)
+    - [Task ID Reference](#task-id-reference)
+    - [Commit message matter](#commit-message-matter)
+    - [Never use merge commit](#never-use-merge-commit)
+    - [Links (markdown)](#links-markdown)
 
-
-
+- [Misc](#misc)
+    - [Quick technical wins](#quick-technical-wins)
+    - [Odoo.sh dev branches](#odoosh-dev-branches)
+    - [Method splitting (personal opinion)](#method-splitting-personal-opinion)
 
 
 ## Technical Details
@@ -148,6 +165,9 @@ Do:
 product = orders.order_line.product_id
 product_ids = orders.order_line.product_id.ids
 ```
+
+> [!NOTE]
+> Introduced with https://github.com/odoo/odoo/pull/32897
 
 ### `api.depends` decorator
 

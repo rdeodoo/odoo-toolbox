@@ -19,7 +19,8 @@ offer a solution, an idea, or at least a direction.
 Sometimes you might wonder: “Should I really say something here?”, maybe you're
 unsure you're right, or hesitant because of who you're talking to.\
 It's easy: the fact you think there is something to say is enough to just say
-it. Don’t overthink it, just speak up. Your input matters.
+it.\
+**Don’t overthink it, just speak up. Your input matters.**
 
 > [!SUCCESS]
 > You **should** send feedback to everyone, regardless of role or seniority.

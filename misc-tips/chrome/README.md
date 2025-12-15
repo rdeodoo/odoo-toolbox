@@ -14,8 +14,8 @@ This will redirect you to `https://www.odoo.com/odoo/project.task/4544330`
 without having to go to Odoo.com, find the task, or click on a task then change
 the ID.
 
-You can do that for a lot of website you access to daily based on a number or a
-search term.
+You can do that for a lot of website you access daily, based on a number or a
+search term (see examples below).
 
 ### Setup
 
@@ -24,12 +24,13 @@ Go to settings > search engines page, or directly access
 Scroll to the `Site search` section and click on `Add`. It will prompt you for a
 name, a shortcut and a URL with placeholders.
 
-**Name**: It has no purpose other than helping you figure what it is about when
-accessing the settings. Just type the same as what you type in `shortcut`.
-**Shortcut**: This is the keyword you'll type in your URL bar to have the custom
-search kicks in.
-**URL with %s in place of query**: The URL that should be reached, with `%s`
-being the placeholder that will be replaced by what you typed.
+- **Name**: It has no purpose other than helping you figure what it is about
+  when accessing the settings. Just type the same as what you type in
+  `shortcut`.
+- **Shortcut**: This is the keyword you'll type in your URL bar to have the
+  custom search kicks in.
+- **URL with %s in place of query**: The URL that should be reached, with `%s`
+  being the placeholder that will be replaced by what you typed.
 
 Example:
 ![Shortcut Settings](img/shortcut-settings.png)

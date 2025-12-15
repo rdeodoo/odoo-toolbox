@@ -12,7 +12,7 @@ It will make your life a thousand time easier and save you a lot of time.
 This is how it looks like with my configuration, even though there are a lot of
 different tools and configs to achieve this:
 
-![Git Bash Prompt](img/git-bash-prompt.png)
+![Git Bash Prompt](git-bash-prompt/img/git-bash-prompt.png)
 
 > [!TIP]
 > 👉 Find the steps to install it and my config here: [Git Bash Prompt]
@@ -24,13 +24,19 @@ think about regularly fetching to see if you are up to date.
 
 Do you remember wasting time investigating something to then realize it was just
 because you were 580 commits behind on the community repository?\
+Or the time you forgot to pull the last commits on a client repository before
+starting to work on it, and you ended up doing a lot of useless work that was
+already done in the meantime?\
 That won't ever happen again.
 
-How it works is that every time you'll press `Enter` in your shell in a `git`
-repository folder, it will automatically `fetch` behind the scenes if it did not
-fetch in the last 5 minutes.
+How it works is that every time you'll press `Enter` in your shell, inside a
+`git` repository folder, it will automatically `fetch` behind the scenes if it
+did not fetch in the last 5 minutes.
 
 In my case, this is coming from the `Git Bash Prompt` tool mentioned above.
+
+If you have a visual git prompt as explained above, you'll see a red number
+appearing next to the branch name when you are behind, can't miss it.
 
 ## Reverse search
 
@@ -41,7 +47,7 @@ further you type, the further results will be trimmed down.
 
 You can then press `CTRL+R` repeatedly to loop through the results.
 
-Press `Enter` once you found what you needed to execute that command.
+Press `Enter` once you found what you needed to select that command/entry.
 
 You can use `CTRL+S` to loop back in the results, in case you went too fast and
 went through the line you were looking for.
@@ -53,15 +59,16 @@ went through the line you were looking for.
 
 ## Partial history search
 
-Same spirit as `CTRL+R` reverse search. You would type anything in your shell
-like `./odoo-bin` and then press `PgUp` or `PgDn` to loop through your previous
-commands that starts with `./odoo-bin`. It's convenient to very quickly go back
-to a command you are not exactly sure what is was but you now the start of it.
+Same spirit as `CTRL+R` reverse search. You would type anything in your shell,
+for instance `./odoo-bin` and then press `PgUp` or `PgDn` to loop through your
+previous commands that starts with `./odoo-bin`. It's convenient to very quickly
+go back to a command you are not exactly sure what is was but you now the start
+of it.
 
 > [!TIP]
 > You can mix this with the `CTRL+K` shortcut to quickly remove part of a
-> command and start looping around other matches.
-> See TODO link to keyboard navigation
+> command and start looping around other matches.\
+> 👉 See my keyboard navigation [article](../keyboard-navigation/README.md)
 
 ### Config:
 
@@ -77,7 +84,8 @@ If not enabled by default, you can add this in your `~/.inputrc`:
 > [!TIP]
 > If you modify a shell config file like `~/.inputrc`, `~/.bashrc`,
 > `~/.bash_aliases` etc, you'll need to "reload" the configuration by doing
-> `source ~/.inputrc` and/or `source ~/.bashrc` or it won't work.
+> `source ~/.inputrc` and/or `source ~/.bashrc` or it won't work until you
+> reload your shell.
 
 ## Bash Aliases
 
@@ -104,7 +112,7 @@ You can then just do this to start a DB, using odoo-bin arguments as you would n
 oe -d my_db -i some_module --dev=reload
 ```
 
-### tig
+### `tig`
 
 If you are using `tig`, I'd suggest adding this alias so it avoids the `tig`
 command to load thousands of commits, which takes forever while you usually just
@@ -114,20 +122,25 @@ want the first few ones:
 alias tig="tig --max-count=150"
 ```
 
-### Copy Database
+> [!TIP]
+> `tig` is a text-mode interface for `git`.\
+> 👉 See my [tig article](tig/README.md)
 
-This method copies a database into a new one (very quickly). It takes care of
+### Copy local DB instantly
+
+This command copies a database into a new one (very quickly). It takes care of
 copying the filestore as well. You can optionally start Odoo directly after the
 copy.
 
 This is especially useful in 2 scenario where I use this command as a
-"savepoint", sort of a rollback in time before I break or do something that I
-can't revert but I will have to revert.
-- Upgrading: you did set up a database in a specific version that you will need
+"savepoint", sort of a rollback in time before I break the database or do
+something that I can't revert but will have to revert.
+- **Upgrading**: you did set up a database in a specific version that you will need
   to upgrade (to test something), and you know you will have to do it multiple
-  time because
-- Testing code: you need to test your code, but once you test it you can't
+  time.
+- **Testing code**: you need to test your code, but once you test it you can't
   easily retest it as it depends of something you have to recreate.\
+
   For instance, you have a custo where you select 5 orders and generate a single
   invoice where you merge some lines, splits others, and do other stuff outside
   the invoice itself.\
@@ -137,7 +150,7 @@ can't revert but I will have to revert.
   for some reason.
 
   In this case, you just setup your 5 SO, and before clicking on "Create
-  Invoice", you run `cpodoo mydb mydbB` and you now have a backup of your DB
+  Invoice", you run `cpodoo mydb mydbBkp` and you now have a backup of your DB
   that you can copy the other way around at any time to regenerate the invoice
   in the exact same condition in 5 seconds.
 
@@ -145,19 +158,23 @@ can't revert but I will have to revert.
   # setup your DB, like creating the 5 SO you need
   ./odoo-bin -d mydb ..
   # copy the DB
-  cpodoo mydb mydbB
+  cpodoo mydb mydbBkp
   # restart your DB and generate the invoice
   ./odoo-bin -d mydb ..
-  # you adapted the code be cause the invoice was wrong
-  # now bootstrap again a DB based on the back you made
-  cpodoo mydbB mydb
+
+  # ..you adapted the code because the invoice was wrong..
+
+  # now bootstrap again a DB based on the backup you made
+  cpodoo mydbBkp mydb
   # retry generating the invoice
   ./odoo-bin -d mydb ..
 
   # you can repeat this infinitely:
-  cpodoo mydbB mydb
+  cpodoo mydbBkp mydb
   ./odoo-bin -d mydb ..
   ```
+
+This is the code to add in your `~/.bash_aliases` file:
 
 ```
 cpodoo() {
@@ -169,16 +186,20 @@ cpodoo() {
 }
 ```
 
+> [!TIP]
+> You don't even have to login again, as the DB is an exact copy, your session
+> is still valid.
+
 > [!WARNING]
 > If you have an open `psql` connection in one of your shell, don't forget to
-> exit it, or you won't be able to copy the DB.
+> exit it, or you won't be able to copy the DB (as it will delete it first).
 
 ## Git Aliases
 
 You can add shortcuts to the `git` command, so you don't have to repeatedly
 write the same long command again and again.
 
-You can do that by adding this in the `~/.gitconfig` file:
+You can do that by adding this in your `~/.gitconfig` file:
 ```py
 [alias]
         co = checkout
@@ -189,13 +210,11 @@ You can do that by adding this in the `~/.gitconfig` file:
 ```
 
 The `rh` (reset --hard) command is very convenient to instantly get a branch up
-to date instead of doing `git pull` which takes forever. `rh` will get your
-branch up to date in half a second, even if you are thousands of commits late.\
-Just know that it's a `--hard` reset, so it will "erase" all your pending diff
-or commit you have added locally.\
-This is especially useful for your community and enterprise repositories where
-you most likely always just want to update your branch and ignore what you have
-locally.
+to date instead of doing `git pull` which takes forever.
+
+> [!TIP]
+> 👉 See my full git guide [here](../git/README.md), which includes a section
+> about this `rh` [faster pull](../git/README.md#faster-pull) command.
 
 
 [Git Bash Prompt]: git-bash-prompt/README.md
