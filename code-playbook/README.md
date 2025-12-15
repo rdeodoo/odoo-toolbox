@@ -6,7 +6,7 @@ _This document is following the official [Coding Guidelines] which you should
 read first._
 
 This document contains a list of the most **recurring mistakes**, implicit
-**conventions** and non-written **best practices** related to Odoo coding.\
+**conventions** and non-written **best practices** related to Odoo coding.
 It also repeats some points mentioned in the official [Coding Guidelines] to add
 some explanation, example or emphasis on the importance to follow it.
 
@@ -14,19 +14,11 @@ Those are important, because they make the code easier to read, easier to debug,
 faster to review, reduce the risk of bugs and just help ensuring consistency
 between Odoo repositories.
 
-**Basic example:**
-If you want to know where is declared the "Cup" relational field of the
-"Kitchen" model, you should **always** find it in a blink, without even having
-to search for it:
-- Exactly in the `/models/kitchen.py` file
-- Named exactly `cup_id`
-
-The "Kitchen" views (form, list, ..) should be defined exactly in
-`/views/kitchen_views.xml` (not in `/views/kitchen_templates.xml`, this is for
-portal/website QWeb views).
+The examples shown here are real life examples found during my code reviews.\
+I kept the most recurring ones and anonymized them.
 
 > [!IMPORTANT]
-> 👉 **Strict code convention is not a way to be annoying, it's a way to make
+> **Strict code convention is not a way to be annoying, it's a way to make
 > everyone life easier and save time to everyone.**
 
 Remember, once your code is done, it will:
@@ -657,7 +649,7 @@ something.
 > While it's a generally agreed rule in Python, some find it useless to follow
 > when there is a limited number of elements to sort. While this is fair to say,
 > in practice we have to follow a "all white or all black" rule, or people will
-> just over-abuse or ignore the rule. At best, it will create useless debates.
+> just over-abuse or ignore the rule. At best, it will create useless debates.\
 > 👉 See my "all white or all black" opinion [article](../misc-tips/all-black-or-all-white/README.md)
 
 ### Useless checks and fallbacks
@@ -790,7 +782,7 @@ def a_method(self):
 
 <details>
 
-<summary>See a real JS example for illustration</summary>
+<summary>See a real JS example for illustration (click me)</summary>
 
 In this example, you'll see that the method is correctly commented as being a
 copy pasted method with patches (using convenient JSDoc notation).
@@ -1163,6 +1155,7 @@ record.my_method(order, partner, 30, company_id=1, template='c2')
 ### Be consistent
 
 Consistency helps reading code.
+
 Don't:
 ```py
 field_1_id = fields.Many2one(comodel_name="module.field_1")
@@ -1241,9 +1234,11 @@ will need to quickly identify the related task to the LOC they are currently
 working on.\
 It should be part of your commit message.
 
-There are two ways to do that, the _official_ one being preferred as the
-_upgrade_ one is "wasting" 9 characters on the title automatically, while we are
-already struggling to have the commit message fit in 72 characters.
+There are two ways to do that:
+- the _official_ Odoo one: being preferred, see the [git guidelines] Odoo doc
+- the _upgrade_ one: "wasting" 9 characters on the title every time, while we
+  are already struggling to have the commit message fit in 72 characters.
+
 Also, the _official_ one is following more the Git/Github spirit, see [autolink]
 and [Git Trailers].
 
@@ -1269,7 +1264,7 @@ Note that for bugfixes (`Help` project), it should be `opw-id`, not `task-id`.
 
 ### Commit message matter
 
-Write useful information inside the commit message, not only on the PR.
+Write useful information inside the commit message, not only on the PR.\
 PR messages are not as important, and often not even looked at since it will
 often be outdated compared to the commit message (ideally, it shouldn't).
 
@@ -1655,3 +1650,4 @@ time: KISS and no premature optimization.
 [Use Translation method Correctly]: https://www.odoo.com/documentation/18.0/contributing/development/coding_guidelines.html#use-translation-method-correctly
 [pep8 section]: https://peps.python.org/pep-0008/#should-a-line-break-before-or-after-a-binary-operator
 [Single-responsibility principle]: https://en.wikipedia.org/wiki/Single-responsibility_principle
+[git guidelines]: https://www.odoo.com/documentation/18.0/contributing/development/git_guidelines.html#commit-message-structure

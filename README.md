@@ -1,7 +1,7 @@
 # odoo-toolbox
 
-Welcome! This repository is a curated collection of guides, tips, and best
-practices for Odoo developers and team leads.
+Welcome! This repository is a collection of guides, tips, and best practices for
+Odoo developers and team leads.
 
 Whether you’re looking for code style conventions, productivity tips, or
 leadership advice, you’ll find practical resources here.
@@ -10,8 +10,6 @@ leadership advice, you’ll find practical resources here.
 
 - **[Code Playbook](code-playbook/README.md)**
   Recurring mistakes, conventions, and best practices for Odoo code.
-- **[Linters](linters/README.md)** (TODO)
-  (Coming soon) Python (flake8, ruff) and JavaScript (eslint) linter setup and tips.
 - **[Team Lead Guide](team-lead/README.md)**
   What it means to be a team leader at Odoo, with actionable advice.
 
@@ -27,9 +25,16 @@ leadership advice, you’ll find practical resources here.
   Straightforward git workflows for Odoo projects.
 - **[Github Tricks](misc-tips/github/README.md)**
   Review tips, canonical URLs, and more.
-- **[Method Splitting](misc-tips/method-splitting/README.md)** (TODO)
-  (Coming soon) Why smaller methods matter (opinion & examples).
 - **[Soft Skills](misc-tips/soft-skills/README.md)**
   Feedback culture and communication tips.
-- **[All Black or All White](misc-tips/all-black-or-all-white/README.md)** (TODO)
+
+## TODO
+
+- **[Linters](linters/README.md)**
+  (Coming soon) Python (flake8, ruff) and JavaScript (eslint) linter setup and tips.
+- **[Method Splitting](misc-tips/method-splitting/README.md)**
+  (Coming soon) Why smaller methods matter (opinion & examples).
+- **[All Black or All White](misc-tips/all-black-or-all-white/README.md)**
   (Coming soon)
+- **Keep code simple
+  (Coming soon) Real examples of over-engineered code.
