@@ -1,11 +1,35 @@
 # odoo-toolbox
 
+Welcome! This repository is a curated collection of guides, tips, and best
+practices for Odoo developers and team leads.
 
-## Todo list
+Whether you’re looking for code style conventions, productivity tips, or
+leadership advice, you’ll find practical resources here.
 
-Incoming articles:
-- Explain that people should KISS -> show code (maybe KUSN toolsgroup routes in DB?)
-  Also link to single responsibility principle article
-  https://github.com/odoo-ps/psus-usmp/pull/38#discussion_r2575599434
-- pg_dump --column-inserts --data-only --table=customer_account --table=customer_account_bill --table=customer_location --table=customer_asset --table=res_partner hbh3 > customer_account.dump
-  scp /home/odoo/Downloads/onesource.dump  25481316@onesource-sh-18-0-osc-5095497-yesh-25481316.dev.odoo.com:/tmp/
+## 📚 Main Sections
+
+- **[Code Playbook](code-playbook/README.md)**
+  Recurring mistakes, conventions, and best practices for Odoo code.
+- **[Linters](linters/README.md)** (TODO)
+  (Coming soon) Python (flake8, ruff) and JavaScript (eslint) linter setup and tips.
+- **[Team Lead Guide](team-lead/README.md)**
+  What it means to be a team leader at Odoo, with actionable advice.
+
+## 🛠️ Miscellaneous Tips
+
+- **[Chrome Tips](misc-tips/chrome/README.md)**
+  Site search shortcuts and browser productivity.
+- **[Keyboard Navigation](misc-tips/keyboard-navigation/README.md)**
+  Essential shortcuts for efficient navigation in editors and OS.
+- **[Shell Tools](misc-tips/shell-tools/README.md)**
+  Visual git prompts, auto-fetch, and shell productivity.
+- **[Git Made Simple](misc-tips/git/README.md)**
+  Straightforward git workflows for Odoo projects.
+- **[Github Tricks](misc-tips/github/README.md)**
+  Review tips, canonical URLs, and more.
+- **[Method Splitting](misc-tips/method-splitting/README.md)** (TODO)
+  (Coming soon) Why smaller methods matter (opinion & examples).
+- **[Soft Skills](misc-tips/soft-skills/README.md)**
+  Feedback culture and communication tips.
+- **[All Black or All White](misc-tips/all-black-or-all-white/README.md)** (TODO)
+  (Coming soon)
