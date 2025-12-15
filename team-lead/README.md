@@ -9,22 +9,22 @@ won't apply here. Odoo "management" is truly unique and in many ways opposite
 to what is usually done in companies:
 - no corporate bullshit, KISS (Keep It Simple, Stupid) and focus on the product
 - no useless recurring meetings
-- little to no KPIs
+- little-to-no KPIs
 - flat hierarchy
 - full trust and autonomy are given by default, people don't have to earn it,
   they just have to not lose it
 
 > [!TIP]
-> With 60%+ growth year after year, a lot of people will become TL soon.
+> With 60%+ growth year after year, a lot of people will become TLs soon.
 
 This role isn’t easy, and new team leads are appointed regularly. Having been a
-team lead for over five years - first in the Belgian Website R&D team, then in
-the Buffalo PS Tech department - I’ve outlined the key principles to keep in
+team lead for over five years, first in the Belgian Website R&D team, then in
+the Buffalo PS Tech department, I’ve outlined the key principles to keep in
 mind when leading a team at Odoo.
 
 Hopefully this will help you understand better:
-- if you are a TL: what is expected from you as a TL
-- if you are not a TL yet: understand your TL better and know what to expect
+- if you are a TL: to understand what is expected from you
+- if you are not a TL yet: to understand your TL better and know what to expect
 
 ## Table of Contents
 
@@ -53,8 +53,8 @@ Hopefully this will help you understand better:
 
 Stop doing what you are doing when someone asks for help.
 
-If you can't figure something out for someone, dig yourself until you find the
-solution. Don't ask them to figure things out for yourself. You are here to
+If you can't figure something out for someone, dig in yourself until you find
+the solution. Don't ask them to figure things out for yourself. You are here to
 serve them, not the other way around.
 
 ## Overestimate their time, underestimate yours
@@ -65,8 +65,8 @@ Make it clear that asking for your help/time is a **magic life hack** that turns
 of experience. It's _that_ magic!
 
 The "end game" goal is to have your team members as valuable as you are.\
-While your time is more valuable short-term, any of your time you can offer to
-someone is like a seed. It will be multiplied long-term.\
+While your time is more valuable short-term, any of your time that you can offer
+to someone is like a seed. It will be multiplied long-term.\
 Invest now, benefit later. If you don't, you'll get overwhelmed and fall behind
 over time.
 
@@ -83,7 +83,7 @@ needing anything from you.
 
 You should make it so:
 - They have enough self-confidence to speak up in the company on their own
-- They learnt everything they had to learn from you, process-wise, vision-wise
+- They learned everything they had to learn from you, process-wise, vision-wise
   or technically
 
 If you feel irreplaceable, or feel that if you were not there things would go
@@ -115,7 +115,8 @@ Good:
 
 
 Bad:
-- Constantly ask people to report to you about what they do, their progress, ..
+- Constantly ask people to report to you about what they do, their progress,
+  etc.
 - Try to find someone else to help someone instead of helping them yourself.
   Don't just be a dispatcher.
 
@@ -128,8 +129,8 @@ responsibility and "shield" your team.
 
 Act as if it was your own fault, not theirs.
 
-Everyone does mistakes, as long as it's not happening too often, make sure they
-don't feel too bad about it. Take the opportunity to teach them "in private",
+Everyone makes mistakes, as long as it's not happening too often, make sure they
+don't feel too bad about it. Take the opportunity to teach them "in private"
 after sorting out the issue for them.
 
 For instance, if someone accidentally deletes a client database, while always
@@ -148,7 +149,7 @@ because.. they don't know.\
 It's your job to read between the lines and to always go further than what they
 asked. Take every opportunity to cover more than the initial request.
 
-Pay attention to everything, for instance while you look at people navigating
+Pay attention to everything; for instance while you look at people navigating
 through their IDE, shell or browser, spot the shortcuts or tools that you would
 use to save time that they don't use, and make sure to at least mention it so
 they know (maybe they do).
@@ -171,13 +172,13 @@ This is not pleasant for them. This is scary.\
 Be a big brother, don't be a policeman.
 
 If people take this as a weakness and try to take advantage of it in any way,
-that's generally a good sign that this person shouldn't be in the company.
-Toxicity is usually nearby with that kind of person.
+that's generally a sign that this person shouldn't be in the company.\
+Toxicity is usually close by with that kind of person.
 
 ## Identify pain points
 
 **Listen to your team**: they are always the key. Figure out where they are
-wasting time in the processes. Figure out what is making their day harder or
+wasting time due to the processes. Figure out what is making their day harder or
 their work annoying.
 
 **But also don't listen to your team:** read between the lines, and don't take
@@ -190,12 +191,12 @@ At the end, try to make their life easier.
 ## Reduce processes and rules, don't add more
 
 A typical human reaction in management is to add a process whenever something
-goes wrong, to be sure it's documented and doesn't happen again.
+goes wrong, to ensure it's documented and doesn't happen again.
 
 Most of the time, it's a (very) bad solution. You should educate people and let
 them make mistakes so they can learn.
 
-Having countless documents, knowledge articles are quickly getting out of
+Having countless documents and knowledge articles is quickly getting out of
 control. It's also a terrible and frightening experience for newcomers, they
 will feel overwhelmed.
 
@@ -214,15 +215,15 @@ Working in Odoo is a win-win relationship, it's one of your top priorities to
 make sure people realize that.
 
 We have:
-- infinite freedom
+- near-infinite freedom
 - as close to a flat hierarchy as it can get
-- accessible top-level management
+- accessible top management
 - freedom of talk
 - paid team sport activities
 - paid regular team building & after-work
 - while the salaries are not always the best, we are spoiled with extra benefits
   in most offices:
-  - free lunch
+  - free lunches
   - free fruits & snacks
   - free beers after-work
   - rooftop/swimming pool/fitness in some offices
@@ -236,7 +237,7 @@ certainly is way better than average companies.
 This is your n°1 priority, by far. It's not even close.\
 You can recover from everything: bad processes, bad technical people, bad
 projects, etc. But it's close to impossible to recover from a bad mindset /
-culture, especially if persisted for some time.
+culture, especially if it has persisted for some time.
 
 This is the most valuable asset Odoo (as a company) has. Fight for it.
 
@@ -249,8 +250,9 @@ This is the most valuable asset Odoo (as a company) has. Fight for it.
 
 Have a perfectly clear overview of what each member of your team is capable of.
 
-You should be able to have a good idea of who is developing quickly, technically
-better, helping others more, has a good company culture.\
+You should be able to have a good idea of who is developing quickly, who is
+technically better, who is helping others more, and who shows a good company
+culture.\
 It shouldn't be too hard for you to sort your team members in a specific order
 on the "expectations scale" we use in Odoo (NI, ME, EE..).
 
@@ -315,8 +317,8 @@ And if they already knew it? It's fine, it was a good refresher.
 
 ## Let them fall, but catch them fast
 
-Give full trust. Let them take ownership. Let them fail, that's how people learn
-and grow. That's how people fall in love with this company.
+Give full trust. Let them take ownership. Let them fail, that's how people
+learn, grow, and fall in love with this company.
 
 Your job isn't to prevent every mistake; it's to be available to help and fix
 things quickly when something goes wrong and make sure they learn from it
@@ -334,9 +336,9 @@ think mistakes are not tolerated. Make sure they know it's not the case.
 If someone is not fit for the company, don't hesitate too long. The longer you
 wait, the more damage they will do to the company culture and productivity.
 
-Worse: you are not doing them a favor. You are making them stay in a place where
-they don't belong, and they can very well feel it every day, in the vast
-majority of cases.\
+Worse: you are not doing them any favor. You are making them stay in a place
+where they don't belong, and they can very well feel it every day, in most
+cases.\
 There is nothing worse than feeling stuck somewhere where you feel like you are
 a burden for others.\
 Change your mindset: letting them go will allow them to find a place where they
