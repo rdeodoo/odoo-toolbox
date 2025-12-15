@@ -22,5 +22,5 @@ It's easy: the fact you think there is something to say is enough to just say
 it.\
 **Don’t overthink it, just speak up. Your input matters.**
 
-> [!SUCCESS]
+> [!TIP]
 > You **should** send feedback to everyone, regardless of role or seniority.
