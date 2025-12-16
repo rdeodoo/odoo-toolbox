@@ -1046,7 +1046,7 @@ space up to that).
 **For commit message**: it should actually be 72: `git log` (or `tig` etc) are
 inserting 4 spaces after and before your message, so 72 actually makes it go to
 80.
-Also note that your commit title on Github will glitched when exceeding 72
+Also note that your commit title on GitHub will glitched when exceeding 72
 chars. The title will be cut with ellipsis.
 Code blocks and links will obviously go over the 72 chars limit.
 
@@ -1239,7 +1239,7 @@ There are two ways to do that:
 - the _upgrade_ one: "wasting" 9 characters on the title every time, while we
   are already struggling to have the commit message fit in 72 characters.
 
-Also, the _official_ one is following more the Git/Github spirit, see [autolink]
+Also, the _official_ one is following more the Git/GitHub spirit, see [autolink]
 and [Git Trailers].
 
 **Official convention** (end of message on a separate line):
@@ -1331,7 +1331,7 @@ impossible to use/understand spaghetti commits history:
   ```
   This won't be clickable when debugging code locally, adding complexity for no
   reason.\
-  Those "links" will only be turned into clickable links on Github.\
+  Those "links" will only be turned into clickable links on GitHub.\
   Use full path instead, with markdown, see below.
 - Use `markdown`, it makes your commit message easier to read, remove "noise"
   from it and allow you to easily follow the "72 max chars" rule for commit
