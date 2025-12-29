@@ -1258,6 +1258,44 @@ task-1234567
 Description.
 ```
 
+If you go with the official convention, stick exactly to it as it is. It is not
+`taskId-1234567` or `Task: 1234567`, it is `task-1234567`.\
+People have scripts expecting this exact format (since it's the official
+convention), don't break it for no reason. For instance, this Tampermonkey
+script turns those tags into clickable links on GitHub:
+
+<details>
+
+<summary>Click to see the Tampermonkey script example</summary>
+
+```js
+// ==UserScript==
+// @name         Github turn Task/OPW tag into link
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Turns the usual commit/PR task/opw tags into a clickable link.
+// @author       rde@odoo.com
+// @match        https://github.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Commit msg
+    const preEl = document.evaluate("//pre[text()[contains(., 'task-') or contains(., 'opw-')]]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    preEl.innerHTML = preEl.innerHTML.replaceAll(/(task-|opw-)(\d+)/g, "<a target='_blank' href='https://www.odoo.com/web#id=$2&view_type=form&model=project.task&menu_id&cids=1'>$1$2</a>");
+
+    // PR Desc
+    const pEl = document.evaluate("//div[contains(@class, 'comment-body')]//p[text()[contains(., 'task-') or contains(., 'opw-')]]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    pEl.innerHTML = pEl.innerHTML.replaceAll(/(task-|opw-)(\d+)/g, "<a target='_blank' href='https://www.odoo.com/web#id=$2&view_type=form&model=project.task&menu_id&cids=1'>$1$2</a>");
+
+})();
+```
+
+</details>
+
 Note that for bugfixes (`Help` project), it should be `opw-id`, not `task-id`.
 > [!TIP]
 > `opw` stands for `OpenErp Publisher Warranty`
