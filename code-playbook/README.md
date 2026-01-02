@@ -183,14 +183,21 @@ changed, the `name` will still display the previous `size` value used the last
 time this method was called.\
 The value will be "wrong" until either `color` or `sleeve_type` is changed.
 
-> [!WARNING]
-> Please never take shortcut like not listing `field_A` because `field_B` is
-> already listed and `field_B` is supposed to trigger a change of value in
-> `field_A` according to the business code.\
-> Also don't omit a field because you think its value should never change.
->
-> Both those cases will create bugs at some point, because business code can and
-> will change. So please always list all the fields, explicitly.
+Please never take shortcut like not listing `field_A` because `field_B` is
+already listed and `field_B` is supposed to trigger a change of value in
+`field_A` according to the business code.\
+Also don't omit a field because you think its value should never change.
+
+Both those cases will create bugs at some point, because business code can and
+will change. So please always list all the fields, explicitly.
+
+Finally, note that the issue is even more critical for `stored` field because
+even when the cache is invalidated, the stored value in DB is not updated until
+a dependency change.\
+That's also why you don't want to take any shortcut here thinking "it's fine,
+once the cache is invalidated, the value will be recomputed anyway". This will
+be true until someone stores the field for performance issue or to be able to
+use it in domains or group by.
 
 > [!WARNING]
 > If you are checking user groups in the method, you also need to add the
