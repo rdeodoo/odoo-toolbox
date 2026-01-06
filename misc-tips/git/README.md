@@ -258,7 +258,7 @@ their own branches from it.
 When they will try to rebase their branch onto the new staging branch, they will face conflicts which are:
 1. Confusing to simply understand what is it about, especially for new git
    users. People **will** waste time.
-2. Fuck up every single open pull request targeting this branch, basically
+2. Mess up every single open pull request targeting this branch, basically
    adding all commit for which you changed the hash as if those were new
    commit made by that PR owner. A 1-commit-10-LOC PR might be turned into a
    26-commits-1400-LOC PR.
@@ -269,6 +269,74 @@ When they will try to rebase their branch onto the new staging branch, they will
 > Merging commits from staging to production should be done through CLI by
 > rebasing branches. Never use any of the Github PR UI option, it will change
 > the commit hashes.
+
+### Merging specifics commit on production
+
+This is not allowed and should not be done, for the reasons explained above.
+
+Remember: whenever you push force the staging or production branch you will mess
+up everyone working on branches based on it.
+
+The only thing we should do is:
+1. Rebase the staging branch onto the production branch, meaning merging every
+   commits.
+2. Rebase the staging branch onto the production branch and manually removing
+   the last commit(s) you don't want on production.
+    <details>
+
+    <summary>See how to</summary>
+
+    ```bash
+    git checkout staging
+    git pull  # make sure it's up to date
+    git checkout production
+    git pull  # make sure it's up to date
+    git pull --rebase origin staging
+    # At this point, all commits from staging are now on production
+    git reset --hard HEAD~N  # where N is the number of commits you want to remove from production
+    git push  # you don't need to force push here, as no commit hashes were changed
+    ```
+
+    Alternatively, instead of using `reset --hard`, you can use `rebase -i` to
+    interactively remove the unwanted commits.
+
+    </details>
+
+Those are the only 2 ways to keep the branches [ISO PROD].
+
+So, given:
+```
+Production Branch:
+1
+2
+3
+
+Staging Branch:
+1
+2
+3
+4
+5
+6
+```
+Where 1, 2, 3 are commits already on production, and 4, 5, 6 are commits only on
+staging.
+
+The only things allowed / not requiring a push force and a reset hard on the
+staging later (and on any single dev branches) ara:
+- Merging commit 4
+- Merging commit 4 and 5
+- Merging commit 4, 5 and 6
+
+But not:
+- Merging commit 5
+- Merging commit 6
+- Merging commit 5 and 6
+
+> [!NOTE]
+> Whenever a project has multiple active stagings, those will ultimately require
+> push forcing, so this rule can be relaxed in that specific case, but still try
+> to avoid it as much as possible.
 
 ## Odoo R&D
 
@@ -401,4 +469,5 @@ git push
 > [!TIP]
 > If you are unsure where your branch is pushing to, do `git push -n` (dry run)
 
-[wiki]:  https://github.com/odoo/enterprise/wiki/Git#remotes
+[wiki]: https://github.com/odoo/enterprise/wiki/Git#remotes
+[ISO Prod]: #why-is-iso-prod-important
