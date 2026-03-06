@@ -1040,6 +1040,11 @@ Instead, we have:
 - a `website_sale_delivery` to add the delivery feature to the ecommerce
 - a `website_sale_wishlist` to add the wishlist feature to the ecommerce
 
+> [!INFO]
+> There is no clear rules or recipe to follow here, but a good rule of thumb for
+> a standard MMC project is to at least ask yourself if you are doing something
+> wrong when it exceeds 20 modules.
+
 > [!WARNING]
 > Remember that all modules need to be installable **alone** (`-i module_name`)
 > on a new DB. Unless they exists to be used by multiple unrelated modules, they

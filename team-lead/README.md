@@ -29,7 +29,7 @@ Hopefully this will help you understand better:
 ## Table of Contents
 
 - [Put others first, always](#put-others-first-always)
-- [Overestimate their time, underestimate yours](#overestimate-their-time-underestimate-yours)
+- [Overvalue their time, undervalue yours](#overvalue-their-time-undervalue-yours)
 - [Your goal is to become useless](#your-goal-is-to-become-useless)
 - [Work for them, don't have them work for you](#work-for-them-dont-have-them-work-for-you)
 - [Take the hits for your team](#take-the-hits-for-your-team)
@@ -57,7 +57,7 @@ If you can't figure something out for someone, dig in yourself until you find
 the solution. Don't ask them to figure things out for yourself. You are here to
 serve them, not the other way around.
 
-## Overestimate their time, underestimate yours
+## Overvalue their time, undervalue yours
 
 Make it crystal clear that they are not wasting your time when they ask for it.\
 Make it clear that asking for your help/time is a **magic life hack** that turns
@@ -68,7 +68,7 @@ The "end game" goal is to have your team members as valuable as you are.\
 While your time is more valuable short-term, any of your time that you can offer
 to someone is like a seed. It will be multiplied long-term.\
 Invest now, benefit later. If you don't, you'll get overwhelmed and fall behind
-over time.
+over time. So will they.
 
 > [!WARNING]
 > Make sure they are on track to become autonomous. They should always research
