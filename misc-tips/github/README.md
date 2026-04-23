@@ -1,5 +1,13 @@
 # Github Tricks and Tips
 
+## Table of Contents
+
+- [Fold/Unfold files](#foldunfold-files)
+- [Canonical URL](#canonical-url)
+- [Hide whitespace changes](#hide-whitespace-changes)
+- [Open file in virtual IDE](#open-file-in-virtual-ide)
+- [`.patch` URL trick](#patch-url-trick)
+
 ## Fold/Unfold files
 
 When reviewing a pull request or a commit, you can fold or unfold all files at

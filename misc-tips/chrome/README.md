@@ -1,5 +1,12 @@
 # Chrome tips
 
+## Table of Contents
+
+- [Site search shortcuts](#site-search-shortcuts)
+    - [Explanation](#explanation)
+    - [Setup](#setup)
+    - [Handful shortcuts](#handful-shortcuts)
+
 ## Site search shortcuts
 
 ### Explanation

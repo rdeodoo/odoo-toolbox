@@ -8,6 +8,26 @@ only focus on the simplest and most straightforward way to do things.
 
 This guide will voluntarily explain things in a simple, non-technical way.
 
+## Table of Contents
+
+- [PS Tech repositories](#ps-tech-repositories)
+    - [Basics: clone, create branch, commit & push](#basics-clone-create-branch-commit--push)
+    - [Rebasing your dev branch](#rebasing-your-dev-branch)
+    - [Opening and merging a PR](#opening-and-merging-a-pr)
+- [Push forcing](#push-forcing)
+- [Hard reset](#hard-reset)
+- [Commit hashes and "ISO PROD"](#commit-hashes-and-iso-prod)
+    - [Why is ISO PROD important?](#why-is-iso-prod-important)
+    - [Merging specifics commit on production](#merging-specifics-commit-on-production)
+- [Odoo R&D](#odoo-rd)
+- [Aliases](#aliases)
+- [Faster pull](#faster-pull)
+- [Visual git repository hints](#visual-git-repository-hints)
+- [Overkill features](#overkill-features)
+    - [`--no-ff` for merge commits](#--no-ff-for-merge-commits)
+    - [`--force-with-lease` when pushing](#--force-with-lease-when-pushing)
+    - [Avoid specifying remote](#avoid-specifying-remote)
+
 ## PS Tech repositories
 
 ### Basics: clone, create branch, commit & push
@@ -54,8 +74,10 @@ This guide will voluntarily explain things in a simple, non-technical way.
 
 ### Rebasing your dev branch
 
-When working on a development branch, it's important to keep it up to date with the staging or production branch.\
-Ideally do it once every few days, or at least before pushing your work for review.
+When working on a development branch, it's important to keep it up to date with
+the staging or production branch.\
+Ideally do it once every few days, or at least before pushing your work for
+review.
 
 1. Assuming you are already on your development branch, switch to the production
    branch and pull the latest changes.
@@ -79,14 +101,18 @@ Rebasing a branch basically means:
 - Apply all commits from the production branch since the common ancestor.
 - Reapply your commits on top of the updated development branch.
 
-Since both your commit and the production commits might have modified the same lines, you might encounter conflicts during the rebase that you'll need to resolve manually.
+Since both your commit and the production commits might have modified the same
+lines, you might encounter conflicts during the rebase that you'll need to
+resolve manually.
 
 ### Opening and merging a PR
 
 Once your work is done and pushed to the remote repository, you can open a Pull
 Request (PR) to have your changes reviewed and merged into the target branch.
 
-Once the PR is approved, you can merge it using the GitHub interface or via the command line by simply rebasing your branch onto the target branch and pushing the changes.
+Once the PR is approved, you can merge it using the GitHub interface or via the
+command line by simply rebasing your branch onto the target branch and pushing
+the changes.
 ```bash
 git checkout <target_branch>
 # Ensure you are up to date
@@ -127,7 +153,9 @@ git reset --hard
 
 Unless working with multiple stagings for a single project (and being the tech
 lead), you will never need to use this command.\
-If you face another situation where you think you need to use it, ask for help first, someone surely messed up, it will be the opportunity to ensure everyone is on the same page.
+If you face another situation where you think you need to use it, ask for help
+first, someone surely messed up, it will be the opportunity to ensure everyone
+is on the same page.
 
 ## Commit hashes and "ISO PROD"
 
@@ -135,7 +163,9 @@ Every commit in git has a unique identifier called a "hash".\
 It's a long string of letters and numbers that looks something like this:
 `631f501ba3fc49bcc8465851258fb58235b27444`.
 
-A good way to visualize it is to think of it as a "snapshot" of the repository at a specific point in time, including all the commit history leading up to that point (meaning, all previous commit hashes).
+A good way to visualize it is to think of it as a "snapshot" of the repository
+at a specific point in time, including all the commit history leading up to that
+point (meaning, all previous commit hashes).
 
 If someone push force a branch, all the hashes of the modified commits will
 receive a new hash.
@@ -197,8 +227,11 @@ Development Branch:
 5
 ```
 
-Now, if you rebase your development branch onto the production branch, the commits 4 and 5 will be reapplied on top of commit 6.\
-Note that commit 4 and 5 will receive new hashes, as they are now different commits (their parent commit changed), so you'll need to push force your development branch.
+Now, if you rebase your development branch onto the production branch, the
+commits 4 and 5 will be reapplied on top of commit 6.\
+Note that commit 4 and 5 will receive new hashes, as they are now different
+commits (their parent commit changed), so you'll need to push force your
+development branch.
 
 ```
 Production Branch:
@@ -216,7 +249,8 @@ Development Branch:
 8 (previously 5)
 ```
 
-Now, the final step, once your PR is approved, is to rebase the production branch onto the development branch:
+Now, the final step, once your PR is approved, is to rebase the production
+branch onto the development branch:
 ```
 Production Branch:
 1
@@ -235,7 +269,8 @@ Development Branch:
 8
 ```
 
-You will be able to push normally now, as no commit hashes changed on the production branch, only new commits were added.
+You will be able to push normally now, as no commit hashes changed on the
+production branch, only new commits were added.
 
 The dev branch is called "ISO PROD" when it contains exactly the same commits as
 the production branch (it can have more commits on top of it).
@@ -255,15 +290,26 @@ Doing so, you will change the hashes of the commit, **but** some people may have
 already pulled the previous version of the staging branch and eventually created
 their own branches from it.
 
-When they will try to rebase their branch onto the new staging branch, they will face conflicts which are:
-1. Confusing to simply understand what is it about, especially for new git
-   users. People **will** waste time.
-2. Mess up every single open pull request targeting this branch, basically
-   adding all commit for which you changed the hash as if those were new
-   commit made by that PR owner. A 1-commit-10-LOC PR might be turned into a
+When they will try to rebase their branch onto the new staging branch, they will
+face conflicts, which:
+1. Are confusing to just understand what the errors are about, especially for
+   users not experienced with Git. People **will** waste time.
+2. Mess up every single open pull request targeting this branch. Basically
+   adding all commits for which you changed the hashes as if those were new
+   commits made by that PR owner. A 1-commit-10-LOC PR might become a
    26-commits-1400-LOC PR.
-3. Time consuming to resolve, as they will need to `reset --hard` their branch
-   and reapply **manually** their commits on top of it.
+3. Are time consuming to resolve, as they will need to `reset --hard` their
+   branches and reapply **manually** their commits on top of it.
+
+Also, it will break every commit links, for instance if you revert a commit, the
+commit message will mention the hash of the reverted commit, if you change the
+hash, it will point to nothing anymore.
+People sometimes also share commit hashes in messages to reference them, that's
+a very good practice. For instance, you need to add a performance fix commit
+because a commit from 1 month ago actually introduced a performance issue.
+You'll definitely need to reference that commit for traceability and helping
+people understand the context. If the hash changes, those references will be
+broken.
 
 > [!IMPORTANT]
 > Merging commits from staging to production should be done through CLI by
@@ -323,7 +369,7 @@ Where 1, 2, 3 are commits already on production, and 4, 5, 6 are commits only on
 staging.
 
 The only things allowed / not requiring a push force and a reset hard on the
-staging later (and on any single dev branches) ara:
+staging later (and on every single dev branches) are:
 - Merging commit 4
 - Merging commit 4 and 5
 - Merging commit 4, 5 and 6
@@ -349,7 +395,8 @@ their own `dev` remote to push our development branches:
 - https://github.com/odoo-dev/odoo
 - https://github.com/odoo-dev/enterprise
 
-After cloning the repository (step `1.` above), you'll need to setup the `dev` remote:
+After cloning the repository (step `1.` above), you'll need to setup the `dev`
+remote:
 ```bash
 # For Odoo Enterprise, replace `odoo.git` by `enterprise.git`
 git config remote.dev.url git@github.com:odoo-dev/odoo.git
@@ -359,7 +406,8 @@ git config --add remote.dev.fetch '+refs/heads/*:refs/remotes/dev/*'
 > [!NOTE]
 > Alternatively, check Odoo's official remotes setup guide on the [wiki]
 
-Secondly, when pushing your branch (step `4.` above), you'll need to push to the `dev` remote instead of `origin`:
+Secondly, when pushing your branch (step `4.` above), you'll need to push to the
+`dev` remote instead of `origin`:
 ```bash
 git push -u dev <branch_name>
 ```

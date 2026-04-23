@@ -3,6 +3,13 @@
 This is aimed at either newcomers in IT or people with only basics navigation
 knowledge. If you are a `VIM` expert, you probably don't want to read this.
 
+## Table of Contents
+
+- [Generic](#generic)
+- [Text editors / IDE](#text-editors--ide)
+- [Shell](#shell)
+- [Nano](#nano)
+
 ## Generic
 
 Those works in multiple software but not everywhere.

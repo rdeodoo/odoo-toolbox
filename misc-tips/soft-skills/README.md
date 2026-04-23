@@ -1,5 +1,9 @@
 # Soft Skills
 
+## Table of Contents
+
+- [Sending and Receiving Feedback](#sending-and-receiving-feedback)
+
 ## Sending and Receiving Feedback
 
 If I had to mention only one soft skill that is the most important, it would be

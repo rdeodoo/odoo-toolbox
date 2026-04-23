@@ -1,5 +1,17 @@
 # Shell Tools
 
+## Table of Contents
+
+- [Visual git repository hints](#visual-git-repository-hints)
+- [Auto fetch](#auto-fetch)
+- [Reverse search](#reverse-search)
+- [Partial history search](#partial-history-search)
+- [Bash Aliases](#bash-aliases)
+  - [`odoo-bin`](#odoo-bin)
+  - [`tig`](#tig)
+  - [Copy local DB instantly](#copy-local-db-instantly)
+- [Git Aliases](#git-aliases)
+
 ## Visual git repository hints
 
 You **should** have a tool that change the UI of your bash prompt when you enter
@@ -15,7 +27,7 @@ different tools and configs to achieve this:
 ![Git Bash Prompt](git-bash-prompt/img/git-bash-prompt.png)
 
 > [!TIP]
-> 👉 Find the steps to install it and my config here: [Git Bash Prompt]
+> 👉 Find the steps to install it and my config here: [Git Bash Prompt](git-bash-prompt/README.md)
 
 ## Auto fetch
 
